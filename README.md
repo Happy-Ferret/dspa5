@@ -1,5 +1,8 @@
 # Requirements
-* Pipelined chime/synth/play
+
+Fast, even on a Pi:
+* Pipelined (chime/synth/play)
+* cached
 
 
 # Ideas
@@ -13,5 +16,18 @@
 
 
 # Environment variables
-DSPA_TTS_COMMAND=/usr/bin/say
+Path to a script that accepts text to synthesise on STDIN and saves to wav
+file given as argument.
+```
+DSPA_TTS_CMD=synth.sh
+```
+
+Equivalent call:
+
+```
+echo "Hello, world!" | synth.sh output.wav
+
+```
+Given filename is guaranteed not to exist and will be temporary. It will be
+copied atomically to the cache and played from there.
 

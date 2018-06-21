@@ -9,8 +9,21 @@ import pb "github.com/naggie/dspa5/proto"
 
 const port = ":40401"
 
+type fragment struct {
+	text         string
+	wav_filepath string
+}
+
 type server struct {
-	//synth chan
+	synth_queue chan fragment
+	play_queue  chan fragment
+}
+
+func NewServer() *server {
+	return &server{
+		make(chan fragment, 10),
+		make(chan fragment, 10),
+	}
 }
 
 func (s *server) Speak(annoucement *pb.Announcement, stream pb.Dspa5_SpeakServer) error {
