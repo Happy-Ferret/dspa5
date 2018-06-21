@@ -1,3 +1,6 @@
+syntax = "proto3";
+package proto;
+
 service Dspa06 {
     // system will transform message into fragments and stream them back as they
     // are announced.
