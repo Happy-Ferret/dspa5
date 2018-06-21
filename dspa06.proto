@@ -1,0 +1,27 @@
+service Dspa06 {
+    // system will transform message into fragments and stream them back as they
+    // are announced.
+    rpc Speak (Announcement) returns (stream Announcement);
+}
+
+// similar to a python log handler
+message Announcement {
+    string message = 1;
+
+    enum Level {
+        // no chime (other systems may not display text)
+        NOTSET = 0;
+        // no chime
+        DEBUG = 10;
+        // attention chime
+        INFO = 20;
+        // warning chime
+        WARNING = 30;
+        // alarm chime either end
+        ERROR = 40;
+        // alarm chime either end, message repeated twice
+        CRITICAL = 50;
+    }
+
+    Level level = 2;
+}
