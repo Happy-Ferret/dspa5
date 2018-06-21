@@ -31,3 +31,8 @@ echo "Hello, world!" | synth.sh output.wav
 Given filename is guaranteed not to exist and will be temporary. It will be
 copied atomically to the cache and played from there.
 
+
+# Possible further work
+
+* Chrome extension like before
+* Server methods to subscribe to WAV (or MP3) files to announce in browser (DSPA_NO_SPEAK)
