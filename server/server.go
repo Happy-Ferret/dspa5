@@ -53,12 +53,14 @@ func NewServer() *server {
 	}
 }
 
-func (s *server) Speak(annoucement *pb.Announcement, stream pb.Dspa5_SpeakServer) error {
+func (s *server) Speak(announcement *pb.Announcement, stream pb.Dspa5_SpeakServer) error {
 	s.announcementLock.Lock()
 
 	playingChannel := make(chan *fragment, 10)
 
-	texts := regexp.MustCompile(": |;|,|\\.|(?<=\\!) |(?<=\\?) ").Split(annoucement.Message, -1)
+	s.synthQueue <- &fragment{"", startChimes[announcement.Level], playingChannel, false}
+
+	texts := regexp.MustCompile(": |;|,|\\.|(?<=\\!) |(?<=\\?) ").Split(announcement.Message, -1)
 	for _, text := range texts {
 		s.synthQueue <- &fragment{text, "", playingChannel, false}
 	}
@@ -69,7 +71,7 @@ func (s *server) Speak(annoucement *pb.Announcement, stream pb.Dspa5_SpeakServer
 	s.announcementLock.Unlock()
 
 	for f := range playingChannel {
-		stream.Send(&pb.Announcement{f.text, annoucement.Level})
+		stream.Send(&pb.Announcement{f.text, announcement.Level})
 	}
 
 	return nil
