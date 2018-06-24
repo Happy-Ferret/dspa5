@@ -11,14 +11,14 @@ import pb "github.com/naggie/dspa5/dspa5"
 
 const port = ":40401"
 
-var startChimes = map[int]string{
+var startChimes = map[pb.Announcement_Level]string{
 	pb.Announcement_INFO:     "xerxes_start.wav",
 	pb.Announcement_WARNING:  "warning.wav",
 	pb.Announcement_ERROR:    "error.wav",
 	pb.Announcement_CRITICAL: "redalert.wav",
 }
 
-var stopChimes = map[int]string{
+var stopChimes = map[pb.Announcement_Level]string{
 	pb.Announcement_INFO:     "xerxes_stop.wav",
 	pb.Announcement_CRITICAL: "redalert.wav",
 }
