@@ -10,31 +10,30 @@ import pb "github.com/naggie/dspa5/dspa5"
 
 const port = ":40401"
 
-
 const (
-	NOTSET = 0
-	DEBUG = 10
-	INFO = 20
-	WARNING = 30
-	ERROR = 40
+	NOTSET   = 0
+	DEBUG    = 10
+	INFO     = 20
+	WARNING  = 30
+	ERROR    = 40
 	CRITICAL = 50
 )
 
-startChimes =: map[int]string{
-	INFO : "xerxes_start.wav",
-	WARNING : "warning.wav",
-	ERROR : "error.wav",
-	CRITICAL : "redalert.wav",
+var startChimes = map[int]string{
+	INFO:     "xerxes_start.wav",
+	WARNING:  "warning.wav",
+	ERROR:    "error.wav",
+	CRITICAL: "redalert.wav",
 }
 
-stopChimes =: map[int]string{
-	INFO : "xerxes_stop.wav",
-	CRITICAL : "redalert.wav",
+var stopChimes = map[int]string{
+	INFO:     "xerxes_stop.wav",
+	CRITICAL: "redalert.wav",
 }
 
 type fragment struct {
 	// optional text to say
-	text        string
+	text string
 	// optional wav file to play (added by synth if necessary)
 	wavFilepath string
 	// report chimes/speech as it happens
@@ -51,12 +50,12 @@ type server struct {
 	// synthesise speech if any (or pass on chime)
 	synthQueue chan *fragment
 	// play chime or speech
-	playQueue  chan *fragment
+	playQueue chan *fragment
 }
 
 func NewServer() *server {
 	return &server{
-		&sync.Mutex{}
+		&sync.Mutex{},
 		make(chan *fragment, 10),
 		make(chan *fragment, 10),
 	}
