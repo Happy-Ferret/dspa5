@@ -36,7 +36,7 @@ type fragment struct {
 	// optional text to say
 	text string
 	// optional wav file to play (added by synth if necessary)
-	wavFilepath string
+	wavFile string
 	// report chimes/speech as it happens
 	playingChannel chan *fragment
 	// is this the last message for the request associated with playingChannel? If it
@@ -87,7 +87,7 @@ func (s *server) Speak(annoucement *pb.Announcement, stream pb.Dspa5_SpeakServer
 func (s *server) synthWorker() {
 	for f := range s.synthQueue {
 		if f.text != "" {
-			f.wavFilepath = synth(f.text)
+			f.wavFile = synth(f.text)
 		}
 
 		s.playQueue <- f
@@ -98,7 +98,9 @@ func (s *server) playWorker() {
 	for f := range s.playQueue {
 		f.playingChannel <- f
 
-		play(f.wavFilepath)
+		if f.wavFile != "" {
+			play(f.wavFile)
+		}
 
 		if f.last {
 			close(f.playingChannel)
