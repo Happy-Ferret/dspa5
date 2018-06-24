@@ -2,6 +2,7 @@ package main
 
 import "os"
 import "fmt"
+import "sync"
 import "regexp"
 import "golang.org/x/net/context"
 import "google.golang.org/grpc"
@@ -36,7 +37,7 @@ type fragment struct {
 	text        string
 	// optional wav file to play (added by synth if necessary)
 	wavFilepath string
-	// report chimes/speech as it happens (TODO must be per annoucement)
+	// report chimes/speech as it happens
 	playingChannel chan *fragment
 	// is this the last message for the request associated with playingChannel? If it
 	// is, will be closed after play.
@@ -44,8 +45,9 @@ type fragment struct {
 }
 
 type server struct {
-	// used to serialise announcements
-	announcementQueue chan *pb.Announcement
+	// used to serialise announcements. Lock is used as insertion is
+	// nonblocking, easier than using channel.
+	announcementLock *sync.Mutex
 	// synthesise speech if any (or pass on chime)
 	synthQueue chan *fragment
 	// play chime or speech
@@ -54,13 +56,14 @@ type server struct {
 
 func NewServer() *server {
 	return &server{
-		make(chan *pb.Announcement, 10),
+		&sync.Mutex{}
 		make(chan *fragment, 10),
 		make(chan *fragment, 10),
 	}
 }
 
 func (s *server) Speak(annoucement *pb.Announcement, stream pb.Dspa5_SpeakServer) error {
+	s.announcementLock.Lock()
 
 	playingChannel := make(chan *fragment, 10)
 
@@ -72,7 +75,9 @@ func (s *server) Speak(annoucement *pb.Announcement, stream pb.Dspa5_SpeakServer
 	// send stop marker to close channel on completion
 	s.synthQueue <- &fragment{"", "", playingChannel, true}
 
-	for f := range doneQueue {
+	s.announcementLock.Unlock()
+
+	for f := range playingChannel {
 		err := stream.Send(&pb.Announcement{f.text, announcement.Level})
 	}
 }
