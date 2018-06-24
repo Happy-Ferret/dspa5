@@ -3,8 +3,9 @@ package main
 import "os"
 import "fmt"
 import "sync"
+import "net"
+import "log"
 import "regexp"
-import "golang.org/x/net/context"
 import "google.golang.org/grpc"
 import pb "github.com/naggie/dspa5/dspa5"
 
@@ -39,7 +40,7 @@ type fragment struct {
 	// report chimes/speech as it happens
 	playingChannel chan *fragment
 	// is this the last message for the request associated with playingChannel? If it
-	// is, will be closed after play.
+	// is, will be closed after play. Can be an additional message with only this flag set.
 	last bool
 }
 
@@ -77,22 +78,10 @@ func (s *server) Speak(annoucement *pb.Announcement, stream pb.Dspa5_SpeakServer
 	s.announcementLock.Unlock()
 
 	for f := range playingChannel {
-		err := stream.Send(&pb.Announcement{f.text, announcement.Level})
-	}
-}
-
-func main() {
-	path, ok := os.LookupEnv("DSPA_TTS_COMMAND")
-
-	if !ok {
-		panic("DSPA_TTS_COMMAND not set")
+		stream.Send(&pb.Announcement{f.text, annoucement.Level})
 	}
 
-	s := NewServer()
-	go s.synthWorker()
-	go s.playWorker()
-
-	fmt.Printf("Path is %v\n", path)
+	return nil
 }
 
 func (s *server) synthWorker() {
@@ -107,15 +96,46 @@ func (s *server) synthWorker() {
 
 func (s *server) playWorker() {
 	for f := range s.playQueue {
+		f.playingChannel <- f
+
 		play(f.wavFilepath)
-		s.doneQueue <- f
+
+		if f.last {
+			close(f.playingChannel)
+		}
 	}
 }
 
 func synth(text string) string {
-
+	return "a filepath"
 }
 
 func play(filepath string) {
-
+	fmt.Println(filepath)
+	return
 }
+
+func main() {
+	path, ok := os.LookupEnv("DSPA_TTS_COMMAND")
+
+	if !ok {
+		log.Fatalf("DSPA_TTS_COMMAND not set")
+	}
+
+	lis, err := net.Listen("tcp", "localhost:55223")
+
+	if err != nil {
+		log.Fatalf("Failed to listen on port 55223")
+	}
+
+	s := NewServer()
+	go s.synthWorker()
+	go s.playWorker()
+
+	fmt.Printf("Path is %v\n", path)
+
+	grpcServer := grpc.NewServer()
+	pb.RegisterDspa5Server(grpcServer, s)
+	grpcServer.Serve(lis)
+}
+
