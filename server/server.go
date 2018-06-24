@@ -54,12 +54,15 @@ func NewServer() *server {
 }
 
 func (s *server) Speak(announcement *pb.Announcement, stream pb.Dspa5_SpeakServer) error {
+	// lock to serialise announcement messages so fragments don't interleave
 	s.announcementLock.Lock()
 
 	playingChannel := make(chan *fragment, 10)
 
+	// send start chime
 	s.synthQueue <- &fragment{"", startChimes[announcement.Level], playingChannel, false}
 
+	// split message into text fragments to synthesise separately
 	texts := regexp.MustCompile(": |;|,|\\.|(?<=\\!) |(?<=\\?) ").Split(announcement.Message, -1)
 	for _, text := range texts {
 		s.synthQueue <- &fragment{text, "", playingChannel, false}
@@ -70,6 +73,7 @@ func (s *server) Speak(announcement *pb.Announcement, stream pb.Dspa5_SpeakServe
 
 	s.announcementLock.Unlock()
 
+	// read announcement fragments back to the client as they happen
 	for f := range playingChannel {
 		stream.Send(&pb.Announcement{f.text, announcement.Level})
 	}
