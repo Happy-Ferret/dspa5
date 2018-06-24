@@ -11,25 +11,16 @@ import pb "github.com/naggie/dspa5/dspa5"
 
 const port = ":40401"
 
-const (
-	NOTSET   = 0
-	DEBUG    = 10
-	INFO     = 20
-	WARNING  = 30
-	ERROR    = 40
-	CRITICAL = 50
-)
-
 var startChimes = map[int]string{
-	INFO:     "xerxes_start.wav",
-	WARNING:  "warning.wav",
-	ERROR:    "error.wav",
-	CRITICAL: "redalert.wav",
+	pb.Announcement_INFO:     "xerxes_start.wav",
+	pb.Announcement_WARNING:  "warning.wav",
+	pb.Announcement_ERROR:    "error.wav",
+	pb.Announcement_CRITICAL: "redalert.wav",
 }
 
 var stopChimes = map[int]string{
-	INFO:     "xerxes_stop.wav",
-	CRITICAL: "redalert.wav",
+	pb.Announcement_INFO:     "xerxes_stop.wav",
+	pb.Announcement_CRITICAL: "redalert.wav",
 }
 
 type fragment struct {
@@ -140,4 +131,3 @@ func main() {
 	pb.RegisterDspa5Server(grpcServer, s)
 	grpcServer.Serve(lis)
 }
-
