@@ -65,8 +65,8 @@ func (s *server) Speak(announcement *pb.Announcement, stream pb.Dspa5_SpeakServe
 		s.synthQueue <- &fragment{text, "", playingChannel, false}
 	}
 
-	// send stop marker to close channel on completion
-	s.synthQueue <- &fragment{"", "", playingChannel, true}
+	// send combined chime + stop marker to close channel on completion
+	s.synthQueue <- &fragment{"", startChimes[announcement.Level], playingChannel, true}
 
 	s.announcementLock.Unlock()
 
