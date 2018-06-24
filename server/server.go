@@ -1,11 +1,11 @@
 package main
 
 import "os"
-import "io"
 import "fmt"
+import "regexp"
 import "golang.org/x/net/context"
 import "google.golang.org/grpc"
-import pb "github.com/naggie/dspa5/proto"
+import pb "github.com/naggie/dspa5/dspa5"
 
 const port = ":40401"
 
@@ -17,20 +17,25 @@ type fragment struct {
 type server struct {
 	synthQueue chan fragment
 	playQueue  chan fragment
+	doneQueue  chan fragment
 }
 
 func NewServer() *server {
 	return &server{
 		make(chan fragment, 10),
 		make(chan fragment, 10),
+		make(chan fragment, 10),
 	}
 }
 
 func (s *server) Speak(annoucement *pb.Announcement, stream pb.Dspa5_SpeakServer) error {
-	for {
-		fmt.Printf("annoucement: %v\n", annoucement)
+	texts := regexp.MustCompile(": |;|,|\\.|(?<=\\!) |(?<=\\?) ").Split(annoucement.Message, -1)
+	for text := range texts {
+		
+	}
 
-		err = stream.Send(&pb.Announcement{"Hello", pb.Announcement_WARNING})
+	for f := range s.doneQueue {
+		err := stream.Send(&pb.Announcement{f.text, pb.Announcement_WARNING})
 	}
 }
 
@@ -41,7 +46,7 @@ func main() {
 		panic("DSPA_TTS_COMMAND not set")
 	}
 
-	s = NewServer()
+	s := NewServer()
 	go s.synthWorker()
 	go s.playWorker()
 
@@ -50,22 +55,19 @@ func main() {
 
 func (s *server) synthWorker() {
 	for f := range s.synthQueue {
-		if f.text {
+		if f.text != "" {
 			f.wavFilepath = synth(f.text)
 		}
 
-		playQueue <- f
+		s.playQueue <- f
 	}
 }
 
 func (s *server) playWorker() {
 	for f := range s.playQueue {
 		play(f.wavFilepath)
+		s.doneQueue <- f
 	}
-}
-
-func getFragments(message string) string {
-
 }
 
 func synth(text string) string {
