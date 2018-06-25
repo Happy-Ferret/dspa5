@@ -7,8 +7,8 @@ import (
 	"log"
 	"net"
 	"os"
-	"regexp"
 	"sync"
+	"strings"
 )
 
 const port = ":40401"
@@ -65,7 +65,7 @@ func (s *server) Speak(announcement *pb.Announcement, stream pb.Dspa5_SpeakServe
 	s.synthQueue <- &fragment{"", startChimes[announcement.Level], playingChannel, false}
 
 	// split message into text fragments to synthesise separately
-	texts := regexp.MustCompile(": |;|,|\\.|(?<=\\!) |(?<=\\?) ").Split(announcement.Message, -1)
+	texts := split(announcement.Message)
 	for _, text := range texts {
 		s.synthQueue <- &fragment{text, "", playingChannel, false}
 	}
@@ -114,6 +114,18 @@ func synth(text string) string {
 func play(filepath string) {
 	fmt.Println(filepath)
 	return
+}
+
+func split(message string) []string {
+	// replace punctuation with linebreaks, preserving ! and ?
+	message = strings.Replace(message, ": ", "\n", -1)
+	message = strings.Replace(message, "; ", "\n", -1)
+	message = strings.Replace(message, ", ", "\n", -1)
+	message = strings.Replace(message, ". ", "\n", -1)
+	message = strings.Replace(message, "! ", "!\n", -1)
+	message = strings.Replace(message, "? ", "?\n", -1)
+
+	return strings.Split(message, "\n")
 }
 
 func main() {
