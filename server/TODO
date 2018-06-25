@@ -1,0 +1,8 @@
+cache
+cache GC (limit to 1GB, LRU mtime)
+go-binpack (?) https://github.com/jteeuwen/go-bindata to embed chimes
+switch to use vendor/ (subtree, to protect against disappearing repos)
+client: support log level as CLI option ./client WARNING foo bar
+say warning/critical/error on that level?
+generalise "play" cmd with DSPA_PLAY_CMD
+generalise "say" cmd with DSPA_SYNTH_CMD

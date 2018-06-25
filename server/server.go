@@ -10,6 +10,7 @@ import (
 	"path"
 	"strings"
 	"sync"
+	"io"
 	"io/ioutil"
 	"log"
 )
@@ -126,10 +127,22 @@ func synth(text string) string {
 
 	cmd := exec.Command("say", "-o", name)
 
-	cmd.Run()
+	stdin, err := cmd.StdinPipe()
 
 	if err != nil {
-		log.Fatalf("Error running synth: %v\n", err)
+		log.Println("Error opening stdin: %v", err)
+
+	}
+	defer stdin.Close()
+
+	if err = cmd.Start(); err != nil {
+		log.Println("Error starting synth: %v", err)
+	}
+
+	io.WriteString(stdin, text)
+
+	if err = cmd.Wait(); err != nil {
+		log.Println("Error running synth: %v", err)
 	}
 
 	return "filepath of object in cache"
@@ -139,7 +152,7 @@ func play(filepath string) {
 	err := exec.Command("play", filepath).Run()
 
 	if err != nil {
-		log.Fatalf("Error running play: %v\n", err)
+		log.Printf("Error running play: %v\n", err)
 	}
 }
 
