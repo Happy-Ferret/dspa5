@@ -32,8 +32,8 @@ var stopChimes = map[pb.Announcement_Level]string{
 
 var tmpDir string
 var cacheDir string
-var synthCmd string
-var playCmd string
+var synthCmd []string
+var playCmd []string
 var fileExt string
 
 type fragment struct {
@@ -120,36 +120,46 @@ func (s *server) playWorker() {
 
 func synth(text string) string {
 	hash := sha256.Sum256([]byte(text))
-	cacheFile := path.Join(cacheDir, hex.EncodeToString(hash) + fileExt)
+	cacheFile := path.Join(cacheDir, hex.EncodeToString(hash[:]) + fileExt)
+
+	if _, err := os.Stat(cacheFile); err == nil {
+		return cacheFile
+	}
 
 	f, err := ioutil.TempFile(tmpDir, "synth")
 
 	// before https://go-review.googlesource.com/c/go/+/105675
-	name := f.Name() + fileExt
-	os.Rename(f.Name(), name)
-	defer os.Remove(name)
+	tmpFile := f.Name() + fileExt
+	os.Rename(f.Name(), tmpFile)
+	defer os.Remove(tmpFile)
 
-	cmd := exec.Command("say", "-o", name)
+	args := make([]string, len(synthCmd) + 1)
+	copy(synthCmd, args)
+	args[len(args) - 1] = tmpFile
+	cmd := exec.Command(args[0], args[1:]...)
 
 	stdin, err := cmd.StdinPipe()
 
 	if err != nil {
-		log.Println("Error opening stdin: %v", err)
+		log.Printf("Error opening stdin: %v", err)
 
 	}
 	defer stdin.Close()
 
 	if err = cmd.Start(); err != nil {
-		log.Println("Error starting synth: %v", err)
+		log.Printf("Error starting synth: %v", err)
 	}
 
 	io.WriteString(stdin, text)
 
 	if err = cmd.Wait(); err != nil {
-		log.Println("Error running synth: %v", err)
+		log.Printf("Error running synth: %v", err)
 	}
 
-	return "filepath of object in cache"
+	// atomic!
+	os.Rename(tmpFile, cacheFile)
+
+	return cacheFile
 }
 
 func play(filepath string) {
@@ -188,8 +198,9 @@ func main() {
 	os.MkdirAll(tmpDir, os.ModePerm)
 	os.MkdirAll(cacheDir, os.ModePerm)
 
-	synthCmd = requireEnv("DSPA_SYNTH_CMD", "Command that accepts text on stdin and file to write on argv[1]")
-	playCmd = requireEnv("DSPA_PLAY_CMD", "Command to play an audio file")
+	synthCmd = strings.Split(requireEnv("DSPA_SYNTH_CMD", "Command that accepts text on stdin and file to write on argv[1]"), " ")
+	playCmd = strings.Split(requireEnv("DSPA_PLAY_CMD", "Command to play an audio file"), " ")
+
 	fileExt = requireEnv("DSPA_FILE_EXT", "File extension of audio files with the dot")
 
 	lis, err := net.Listen("tcp", "0.0.0.0:55223")
