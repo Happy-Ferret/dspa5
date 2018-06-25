@@ -1,7 +1,7 @@
 package main
 
 import (
-	//"crypto/sha256"
+	"crypto/sha256"
 	pb "github.com/naggie/dspa5/dspa5"
 	"google.golang.org/grpc"
 	"net"
@@ -11,6 +11,7 @@ import (
 	"strings"
 	"sync"
 	"io"
+	"encoding/hex"
 	"io/ioutil"
 	"log"
 )
@@ -33,6 +34,7 @@ var tmpDir string
 var cacheDir string
 var synthCmd string
 var playCmd string
+var fileExt string
 
 type fragment struct {
 	// optional text to say
@@ -117,11 +119,13 @@ func (s *server) playWorker() {
 }
 
 func synth(text string) string {
-	//addr = sha256.Sum256
+	hash := sha256.Sum256([]byte(text))
+	cacheFile := path.Join(cacheDir, hex.EncodeToString(hash) + fileExt)
+
 	f, err := ioutil.TempFile(tmpDir, "synth")
 
 	// before https://go-review.googlesource.com/c/go/+/105675
-	name := f.Name() + ".aiff"
+	name := f.Name() + fileExt
 	os.Rename(f.Name(), name)
 	defer os.Remove(name)
 
@@ -168,24 +172,25 @@ func split(message string) []string {
 	return strings.Split(message, "\n")
 }
 
-func requireEnv(key string) string {
+func requireEnv(key string, description string) string {
 	val, ok := os.LookupEnv(key)
 
 	if !ok {
-		log.Fatalf("%v required in environment", key)
+		log.Fatalf("%v (%v) required in environment", key, description)
 	}
 
 	return val
 }
 
 func main() {
-	tmpDir = path.Join(requireEnv("DSPA_DATA_DIR"), "tmp/")
-	cacheDir = path.Join(requireEnv("DSPA_DATA_DIR"), "cache/")
+	tmpDir = path.Join(requireEnv("DSPA_DATA_DIR", "Directory to store tmp files and cache"), "tmp/")
+	cacheDir = path.Join(requireEnv("DSPA_DATA_DIR",""), "cache/")
 	os.MkdirAll(tmpDir, os.ModePerm)
 	os.MkdirAll(cacheDir, os.ModePerm)
 
-	synthCmd = requireEnv("DSPA_SYNTH_CMD")
-	playCmd = requireEnv("DSPA_PLAY_CMD")
+	synthCmd = requireEnv("DSPA_SYNTH_CMD", "Command that accepts text on stdin and file to write on argv[1]")
+	playCmd = requireEnv("DSPA_PLAY_CMD", "Command to play an audio file")
+	fileExt = requireEnv("DSPA_FILE_EXT", "File extension of audio files with the dot")
 
 	lis, err := net.Listen("tcp", "0.0.0.0:55223")
 
