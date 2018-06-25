@@ -11,6 +11,8 @@ import (
 	"sync"
 	"strings"
 	"time"
+	"ioutil"
+	"crypto/sha256"
 )
 
 const port = ":40401"
@@ -26,6 +28,11 @@ var stopChimes = map[pb.Announcement_Level]string{
 	pb.Announcement_INFO:     "xerxes_stop.wav",
 	pb.Announcement_CRITICAL: "redalert.wav",
 }
+
+var tmpDir string
+var cacheDir string
+var synthCmd string
+var playCmd string
 
 type fragment struct {
 	// optional text to say
@@ -110,8 +117,25 @@ func (s *server) playWorker() {
 }
 
 func synth(text string) string {
-	time.Sleep(time.Second)
-	return text
+	f, err := TempFile(dir, "synth")
+
+	// before https://go-review.googlesource.com/c/go/+/105675
+	name := f.Name() + '.aiff'
+	os.Rename(f.Name(), newpath string)
+	f, err := os.Create(name)
+
+
+	tmpfile := tmpfile
+	cmd := exec.Command("say", "-o", tmpfile)
+
+
+	cmd.Run()
+
+	if err != nil {
+		log.Fatalf("Error running synth: %v\n", err)
+	}
+
+	return filepath
 }
 
 func play(filepath string) {
@@ -134,24 +158,33 @@ func split(message string) []string {
 	return strings.Split(message, "\n")
 }
 
-func main() {
-	path, ok := os.LookupEnv("DSPA_TTS_COMMAND")
+func requireEnv(key string) string {
+	val, ok := os.LookupEnv(key)
 
 	if !ok {
-		log.Fatalf("DSPA_TTS_COMMAND not set")
+		log.Fatalf("%v required in environment", key)
 	}
 
-	lis, err := net.Listen("tcp", "localhost:55223")
+	return val
+}
 
-	if err != nil {
+func main() {
+	tmpDir = requireEnv("DSPA_DATA_DIR") TODO create subdirs!
+	dataDir = requireEnv("DSPA_DATA_DIR")
+	synthCmd = requireEnv("DSPA_SYNTH_CMD")
+	playCmd = requireEnv("DSPA_PLAY_CMD")
+
+	lis, err := net.Listen("tcp", "0.0.0.0:55223")
+
+	if err == nil {
+		log.Infof("Listening on port 55223")
+	} else {
 		log.Fatalf("Failed to listen on port 55223")
 	}
 
 	s := NewServer()
 	go s.synthWorker()
 	go s.playWorker()
-
-	fmt.Printf("Path is %v\n", path)
 
 	grpcServer := grpc.NewServer()
 	pb.RegisterDspa5Server(grpcServer, s)
