@@ -1,18 +1,17 @@
 package main
 
 import (
-	"fmt"
+	//"crypto/sha256"
 	pb "github.com/naggie/dspa5/dspa5"
 	"google.golang.org/grpc"
-	"log"
 	"net"
 	"os"
 	"os/exec"
-	"sync"
+	"path"
 	"strings"
-	"time"
-	"ioutil"
-	"crypto/sha256"
+	"sync"
+	"io/ioutil"
+	"log"
 )
 
 const port = ":40401"
@@ -117,17 +116,15 @@ func (s *server) playWorker() {
 }
 
 func synth(text string) string {
-	f, err := TempFile(dir, "synth")
+	//addr = sha256.Sum256
+	f, err := ioutil.TempFile(tmpDir, "synth")
 
 	// before https://go-review.googlesource.com/c/go/+/105675
-	name := f.Name() + '.aiff'
-	os.Rename(f.Name(), newpath string)
-	f, err := os.Create(name)
+	name := f.Name() + ".aiff"
+	os.Rename(f.Name(), name)
+	defer os.Remove(name)
 
-
-	tmpfile := tmpfile
-	cmd := exec.Command("say", "-o", tmpfile)
-
+	cmd := exec.Command("say", "-o", name)
 
 	cmd.Run()
 
@@ -135,7 +132,7 @@ func synth(text string) string {
 		log.Fatalf("Error running synth: %v\n", err)
 	}
 
-	return filepath
+	return "filepath of object in cache"
 }
 
 func play(filepath string) {
@@ -169,15 +166,18 @@ func requireEnv(key string) string {
 }
 
 func main() {
-	tmpDir = requireEnv("DSPA_DATA_DIR") TODO create subdirs!
-	dataDir = requireEnv("DSPA_DATA_DIR")
+	tmpDir = path.Join(requireEnv("DSPA_DATA_DIR"), "tmp/")
+	cacheDir = path.Join(requireEnv("DSPA_DATA_DIR"), "cache/")
+	os.MkdirAll(tmpDir, os.ModePerm)
+	os.MkdirAll(cacheDir, os.ModePerm)
+
 	synthCmd = requireEnv("DSPA_SYNTH_CMD")
 	playCmd = requireEnv("DSPA_PLAY_CMD")
 
 	lis, err := net.Listen("tcp", "0.0.0.0:55223")
 
 	if err == nil {
-		log.Infof("Listening on port 55223")
+		log.Printf("Listening on port 55223")
 	} else {
 		log.Fatalf("Failed to listen on port 55223")
 	}
