@@ -7,6 +7,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"os/exec"
 	"sync"
 	"strings"
 	"time"
@@ -114,9 +115,11 @@ func synth(text string) string {
 }
 
 func play(filepath string) {
-	fmt.Println(filepath)
-	time.Sleep(time.Second)
-	return
+	err := exec.Command("play", filepath).Run()
+
+	if err != nil {
+		log.Fatalf("Error running play: %v\n", err)
+	}
 }
 
 func split(message string) []string {
