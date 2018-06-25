@@ -9,6 +9,7 @@ import (
 	"os"
 	"sync"
 	"strings"
+	"time"
 )
 
 const port = ":40401"
@@ -108,11 +109,13 @@ func (s *server) playWorker() {
 }
 
 func synth(text string) string {
-	return "a filepath"
+	time.Sleep(time.Second)
+	return text
 }
 
 func play(filepath string) {
 	fmt.Println(filepath)
+	time.Sleep(time.Second)
 	return
 }
 

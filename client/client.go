@@ -9,6 +9,7 @@ import (
 	"golang.org/x/net/context"
 	"time"
 	"io"
+	"fmt"
 )
 
 func main() {
@@ -51,6 +52,6 @@ func main() {
 			log.Fatalf("Failed to stream: %v", err)
 		}
 
-		log.Println(announcement.Message)
+		fmt.Println(announcement.Message)
 	}
 }
