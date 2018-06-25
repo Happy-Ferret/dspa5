@@ -1,13 +1,15 @@
 package main
 
-import "os"
-import "fmt"
-import "sync"
-import "net"
-import "log"
-import "regexp"
-import "google.golang.org/grpc"
-import pb "github.com/naggie/dspa5/dspa5"
+import (
+	"fmt"
+	pb "github.com/naggie/dspa5/dspa5"
+	"google.golang.org/grpc"
+	"log"
+	"net"
+	"os"
+	"regexp"
+	"sync"
+)
 
 const port = ":40401"
 
