@@ -97,7 +97,9 @@ func (s *server) Speak(announcement *pb.Announcement, stream pb.Dspa5_SpeakServe
 func (s *server) synthWorker() {
 	for f := range s.synthQueue {
 		if f.text != "" {
-			f.wavFile = synth(f.text)
+			// error can be safely ignored -- synth logs and play won't play
+			// nothing
+			f.wavFile, _ = synth(f.text)
 		}
 
 		s.playQueue <- f
@@ -118,15 +120,19 @@ func (s *server) playWorker() {
 	}
 }
 
-func synth(text string) string {
+func synth(text string) (string, error) {
 	hash := sha256.Sum256([]byte(text))
 	cacheFile := path.Join(cacheDir, hex.EncodeToString(hash[:]) + fileExt)
 
 	if _, err := os.Stat(cacheFile); err == nil {
-		return cacheFile
+		return cacheFile, nil
 	}
 
 	f, err := ioutil.TempFile(tmpDir, "synth")
+	if err != nil {
+		log.Printf("Error creating tmpfile: %v", err)
+		return "", err
+	}
 
 	// before https://go-review.googlesource.com/c/go/+/105675
 	tmpFile := f.Name() + fileExt
@@ -134,7 +140,7 @@ func synth(text string) string {
 	defer os.Remove(tmpFile)
 
 	args := make([]string, len(synthCmd) + 1)
-	copy(synthCmd, args)
+	copy(args, synthCmd)
 	args[len(args) - 1] = tmpFile
 	cmd := exec.Command(args[0], args[1:]...)
 
@@ -142,24 +148,29 @@ func synth(text string) string {
 
 	if err != nil {
 		log.Printf("Error opening stdin: %v", err)
-
+		return "", err
 	}
 	defer stdin.Close()
 
 	if err = cmd.Start(); err != nil {
 		log.Printf("Error starting synth: %v", err)
+		return "", err
 	}
 
 	io.WriteString(stdin, text)
 
 	if err = cmd.Wait(); err != nil {
 		log.Printf("Error running synth: %v", err)
+		return "", err
 	}
 
 	// atomic!
-	os.Rename(tmpFile, cacheFile)
+	if err = os.Rename(tmpFile, cacheFile); err != nil {
+		log.Printf("Error moving into tmp file: %v", err)
+		return "", err
+	}
 
-	return cacheFile
+	return cacheFile, nil
 }
 
 func play(filepath string) {
