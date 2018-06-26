@@ -10,7 +10,6 @@ import (
 	"path"
 	"strings"
 	"sync"
-	"io"
 	"encoding/hex"
 	"io/ioutil"
 	"log"
@@ -143,23 +142,9 @@ func synth(text string) (string, error) {
 	copy(args, synthCmd)
 	args[len(args) - 1] = tmpFile
 	cmd := exec.Command(args[0], args[1:]...)
+	cmd.Stdin = strings.NewReader(text)
 
-	stdin, err := cmd.StdinPipe()
-
-	if err != nil {
-		log.Printf("Error opening stdin: %v", err)
-		return "", err
-	}
-	defer stdin.Close()
-
-	if err = cmd.Start(); err != nil {
-		log.Printf("Error starting synth: %v", err)
-		return "", err
-	}
-
-	io.WriteString(stdin, text)
-
-	if err = cmd.Wait(); err != nil {
+	if err = cmd.Run(); err != nil {
 		log.Printf("Error running synth: %v", err)
 		return "", err
 	}
