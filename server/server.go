@@ -66,10 +66,14 @@ func NewServer() *server {
 }
 
 func (s *server) Speak(announcement *pb.Announcement, stream pb.Dspa5_SpeakServer) error {
+	playingChannel := make(chan *fragment, 10)
+
+	if announcement.Level == 0 {
+		announcement.Level = pb.Announcement_INFO
+	}
+
 	// lock to serialise announcement messages so fragments don't interleave
 	s.announcementLock.Lock()
-
-	playingChannel := make(chan *fragment, 10)
 
 	// send start chime
 	s.synthQueue <- &fragment{"", startChimes[announcement.Level], playingChannel, false}
