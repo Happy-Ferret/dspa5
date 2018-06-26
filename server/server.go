@@ -18,15 +18,15 @@ import (
 const port = ":40401"
 
 var startChimes = map[pb.Announcement_Level]string{
-	pb.Announcement_INFO:     "xerxes_start.wav",
-	pb.Announcement_WARNING:  "warning.wav",
-	pb.Announcement_ERROR:    "error.wav",
-	pb.Announcement_CRITICAL: "redalert.wav",
+	pb.Announcement_INFO:     "chimes/xerxes_start.ogg",
+	pb.Announcement_WARNING:  "chimes/warning.ogg",
+	pb.Announcement_ERROR:    "chimes/breech.wav",
+	pb.Announcement_CRITICAL: "chimes/redalert.wav",
 }
 
 var stopChimes = map[pb.Announcement_Level]string{
-	pb.Announcement_INFO:     "xerxes_stop.wav",
-	pb.Announcement_CRITICAL: "redalert.wav",
+	pb.Announcement_INFO:     "chimes/xerxes_stop.ogg",
+	pb.Announcement_CRITICAL: "chimes/redalert.wav",
 }
 
 var tmpDir string
@@ -81,7 +81,7 @@ func (s *server) Speak(announcement *pb.Announcement, stream pb.Dspa5_SpeakServe
 	}
 
 	// send combined chime + stop marker to close channel on completion
-	s.synthQueue <- &fragment{"", startChimes[announcement.Level], playingChannel, true}
+	s.synthQueue <- &fragment{"", stopChimes[announcement.Level], playingChannel, true}
 
 	s.announcementLock.Unlock()
 
