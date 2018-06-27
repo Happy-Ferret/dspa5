@@ -12,7 +12,7 @@
 
 - name: copy over dspa5 src
   git:
-    repo: "ssh://git@github.com/naggie/dspa5.git"
+    repo: "git@github.com:naggie/dspa5.git"
     dest: /usr/local/src/dspa5
   notify:
     - build dspa5-server
