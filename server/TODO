@@ -1,11 +1,11 @@
-cache GC (limit to 1GB, LRU mtime)
+cache GC (limit to 1GB, LRU mtime) (tmpreaper?)
 go-binpack (?) https://github.com/jteeuwen/go-bindata to embed chimes
 switch to use vendor/ (subtree, to protect against disappearing repos)
-client: support log level as CLI option ./client WARNING foo bar
 say warning/critical/error on that level?
 repeat message for critical?
 readme for env, instructions
 maybe switch from flags to env
 go get github.com/naggie/dspa5 should install dspa-server and dspa-client -- multiple root main?
 ansible role to deploy
-dspa-broadcaster, or broadcast built into the servers?
+sd01
+dspa-broadcaster

@@ -13,6 +13,16 @@ import (
 )
 
 func main() {
+	if len(os.Args) == 1 {
+		fmt.Fprintf(os.Stderr, "\nUsage: dspa-client [level] message...\n\n")
+		fmt.Fprintf(os.Stderr, "Where optional level is one of INFO, WARNING, ERROR, CRITICAL\n")
+		fmt.Fprintf(os.Stderr, "Default level is INFO\n\n")
+		os.Exit(1)
+	}
+
+	// conveniently, will be 0 = NOTSET for any invalid value
+	level := pb.Announcement_Level(pb.Announcement_Level_value[os.Args[1]])
+
 	serverAddr, ok := os.LookupEnv("DSPA_SERVER_ADDR")
 
 	if !ok {
@@ -31,12 +41,19 @@ func main() {
 
 	client := pb.NewDspa5Client(conn)
 
-	message := strings.Join(os.Args[1:], " ")
+	var message string
+
+	if level == pb.Announcement_NOTSET {
+		message = strings.Join(os.Args[1:], " ")
+	} else {
+		// ignore level from args
+		message = strings.Join(os.Args[2:], " ")
+	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 100 * time.Second)
 	defer cancel()
 
-	stream, err := client.Speak(ctx, &pb.Announcement{message, pb.Announcement_INFO})
+	stream, err := client.Speak(ctx, &pb.Announcement{message, level})
 
 	if err != nil {
 		log.Fatalf("Failed to announce: %v", err)
