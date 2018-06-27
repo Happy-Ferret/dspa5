@@ -24,6 +24,12 @@
     dest: /usr/local/src/EnglishHTSVoices/
     mode: 0755
 
+- name: copy config
+  copy:
+    src: dspa-server.conf
+    dest: /etc/
+    mode: 0755
+
 - name: Unarchive voice + engine
   unarchive:
     src: EnglishHTSVoices/EnglishHTSVoices-ver1.0.tar.gz
