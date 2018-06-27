@@ -19,14 +19,14 @@ const port = ":40401"
 
 var startChimes = map[pb.Announcement_Level]string{
 	pb.Announcement_INFO:     "chimes/xerxes_start.ogg",
-	pb.Announcement_WARNING:  "chimes/warning.ogg",
-	pb.Announcement_ERROR:    "chimes/breech.wav",
-	pb.Announcement_CRITICAL: "chimes/redalert.wav",
+	pb.Announcement_WARNING:  "chimes/xerxes_chime.ogg",
+	pb.Announcement_ERROR:    "chimes/xerxes_motion.wav",
+	pb.Announcement_CRITICAL: "chimes/xerxes_motion.wav",
 }
 
 var stopChimes = map[pb.Announcement_Level]string{
 	pb.Announcement_INFO:     "chimes/xerxes_stop.ogg",
-	pb.Announcement_CRITICAL: "chimes/redalert.wav",
+	pb.Announcement_CRITICAL: "chimes/xerxes_breech.wav",
 }
 
 var tmpDir string
