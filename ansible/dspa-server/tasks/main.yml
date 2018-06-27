@@ -52,3 +52,18 @@
     chdir: /usr/local/src/EnglishHTSVoices
     creates: /usr/local/src/EnglishHTSVoices/build/bin/flite_hts_engine
 
+- name: Copy dspa-server systemd service file
+  become: yes
+  template:
+    src: dspa-server.service
+    dest: /lib/systemd/system/
+    mode: 0644
+  notify:
+    - reload systemd config
+
+
+- name: enable dspa-server at boot
+  systemd:
+    name: dspa-server
+    enabled: yes
+    masked: no

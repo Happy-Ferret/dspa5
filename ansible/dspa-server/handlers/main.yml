@@ -10,3 +10,8 @@
     name: dspa-server
     state: restarted
 
+- name: reload systemd config
+  become: yes
+  systemd:
+    name: Not required, but is.
+    daemon_reload: yes
