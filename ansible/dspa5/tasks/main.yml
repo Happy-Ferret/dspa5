@@ -1,0 +1,30 @@
+  - name: Update deb packages
+    apt: upgrade=dist update_cache=yes
+
+  - name: Install packages
+    apt: name={{item}} state=present
+      name: "{{ item }}"
+      state: latest
+    become: yes
+    with_items:
+      - golang
+
+- name: copy over dspa5 src
+  git:
+    repo: "ssh://git@github.com/naggie/dspa5.git"
+    dest: /usr/local/src/dspa5
+  notify:
+    - build dspa5-server
+    - restart dspa5-server
+
+- name: Unarchive voice + engine
+  unarchive:
+    src: EnglishHTSVoices-ver1.0.tar.gz
+    dest:/usr/local/src
+    creates: /usr/local/src/EnglishHTSVoices
+
+- name: Build voice engine (flite) for PA
+  command: sh ./do_build
+    chdir: /usr/local/src/EnglishHTSVoices
+    creates: /usr/local/src/EnglishHTSVoices/build/bin/flite_hts_engine
+
