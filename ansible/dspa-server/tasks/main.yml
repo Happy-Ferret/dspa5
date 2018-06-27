@@ -27,11 +27,12 @@
 - name: Unarchive voice + engine
   unarchive:
     src: EnglishHTSVoices/EnglishHTSVoices-ver1.0.tar.gz
-    dest:/usr/local/src
+    dest: /usr/local/src
     creates: /usr/local/src/EnglishHTSVoices
 
 - name: Build voice engine (flite) for PA
   command: sh ./do_build
+  args:
     chdir: /usr/local/src/EnglishHTSVoices
     creates: /usr/local/src/EnglishHTSVoices/build/bin/flite_hts_engine
 
