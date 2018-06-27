@@ -1,6 +1,3 @@
-- name: Update deb packages
-  apt: upgrade=dist update_cache=yes
-
 - name: Install packages
   apt:
     name: "{{ item }}"
@@ -10,21 +7,34 @@
     - golang
     - build-essential
 
+- name: create dspa5 install directories
+  become: yes
+  file:
+    path: "/usr/local/src/{{ item }}"
+    state: directory
+    owner: "{{ansible_user}}"
+    mode: 0755
+  with_items:
+    - dspa5
+    - EnglishHTSVoices
+
 - name: copy over dspa5 src
   git:
     repo: "git@github.com:naggie/dspa5.git"
     dest: /usr/local/src/dspa5
   notify:
-    - build dspa5-server
-    - restart dspa5-server
+    - build dspa-server
+    - restart dspa-server
 
 - name: copy speak.sh
+  become: yes
   copy:
     src: speak.sh
     dest: /usr/local/src/EnglishHTSVoices/
     mode: 0755
 
 - name: copy config
+  become: yes
   copy:
     src: dspa-server.conf
     dest: /etc/

@@ -1,4 +1,4 @@
-- name: build dspa5-server
+- name: build dspa-server
   command: go install
   args:
    chdir: /usr/local/src/dspa5/server
