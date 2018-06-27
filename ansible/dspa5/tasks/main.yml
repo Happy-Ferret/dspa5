@@ -1,13 +1,14 @@
-  - name: Update deb packages
-    apt: upgrade=dist update_cache=yes
+- name: Update deb packages
+  apt: upgrade=dist update_cache=yes
 
-  - name: Install packages
-    apt: name={{item}} state=present
-      name: "{{ item }}"
-      state: latest
-    become: yes
-    with_items:
-      - golang
+- name: Install packages
+  apt:
+    name: "{{ item }}"
+    state: latest
+  become: yes
+  with_items:
+    - golang
+    - build-essential
 
 - name: copy over dspa5 src
   git:
@@ -16,6 +17,12 @@
   notify:
     - build dspa5-server
     - restart dspa5-server
+
+- name: copy speak.sh
+  copy:
+    src: speak.sh
+    dest: /usr/local/src/EnglishHTSVoices/
+    mode: 0755
 
 - name: Unarchive voice + engine
   unarchive:

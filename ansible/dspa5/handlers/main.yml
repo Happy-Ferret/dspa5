@@ -1,5 +1,12 @@
- - name: build dspa5-server
-   command: go install
-   args:
-     chdir: /usr/local/src/dspa5/server
-   become: true
+- name: build dspa5-server
+  command: go install
+  args:
+   chdir: /usr/local/src/dspa5/server
+  become: true
+
+- name: restart dspa-server
+  become: yes
+  systemd:
+    name: dspa-server
+    state: restarted
+
