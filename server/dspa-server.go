@@ -2,17 +2,17 @@ package main
 
 import (
 	"crypto/sha256"
+	"encoding/hex"
 	pb "github.com/naggie/dspa5/dspa5"
 	"google.golang.org/grpc"
+	"io/ioutil"
+	"log"
 	"net"
 	"os"
 	"os/exec"
 	"path"
 	"strings"
 	"sync"
-	"encoding/hex"
-	"io/ioutil"
-	"log"
 )
 
 const port = ":40401"
@@ -125,7 +125,7 @@ func (s *server) playWorker() {
 
 func synth(text string) (string, error) {
 	hash := sha256.Sum256([]byte(text))
-	cacheFile := path.Join(cacheDir, hex.EncodeToString(hash[:]) + fileExt)
+	cacheFile := path.Join(cacheDir, hex.EncodeToString(hash[:])+fileExt)
 
 	if _, err := os.Stat(cacheFile); err == nil {
 		return cacheFile, nil
@@ -142,9 +142,9 @@ func synth(text string) (string, error) {
 	os.Rename(f.Name(), tmpFile)
 	defer os.Remove(tmpFile)
 
-	args := make([]string, len(synthCmd) + 1)
+	args := make([]string, len(synthCmd)+1)
 	copy(args, synthCmd)
-	args[len(args) - 1] = tmpFile
+	args[len(args)-1] = tmpFile
 	cmd := exec.Command(args[0], args[1:]...)
 	cmd.Stdin = strings.NewReader(text)
 
@@ -194,7 +194,7 @@ func requireEnv(key string, description string) string {
 
 func main() {
 	tmpDir = path.Join(requireEnv("DSPA_DATA_DIR", "Directory to store tmp files and cache"), "tmp/")
-	cacheDir = path.Join(requireEnv("DSPA_DATA_DIR",""), "cache/")
+	cacheDir = path.Join(requireEnv("DSPA_DATA_DIR", ""), "cache/")
 	os.MkdirAll(tmpDir, os.ModePerm)
 	os.MkdirAll(cacheDir, os.ModePerm)
 

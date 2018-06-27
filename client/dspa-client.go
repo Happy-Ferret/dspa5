@@ -1,15 +1,15 @@
 package main
 
 import (
+	"fmt"
 	pb "github.com/naggie/dspa5/dspa5"
+	"golang.org/x/net/context"
 	"google.golang.org/grpc"
+	"io"
 	"log"
 	"os"
 	"strings"
-	"golang.org/x/net/context"
 	"time"
-	"io"
-	"fmt"
 )
 
 func main() {
@@ -50,7 +50,7 @@ func main() {
 		message = strings.Join(os.Args[2:], " ")
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 100 * time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
 	defer cancel()
 
 	stream, err := client.Speak(ctx, &pb.Announcement{message, level})

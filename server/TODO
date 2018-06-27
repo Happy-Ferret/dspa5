@@ -1,5 +1,7 @@
 cache GC (limit to 1GB, LRU mtime) (tmpreaper?)
+
 go-binpack (?) https://github.com/jteeuwen/go-bindata to embed chimes
+
 switch to use vendor/ (subtree, to protect against disappearing repos)
 say warning/critical/error on that level?
 repeat message for critical?
@@ -9,3 +11,4 @@ go get github.com/naggie/dspa5 should install dspa-server and dspa-client -- mul
 ansible role to deploy
 sd01
 dspa-broadcaster
+client accept input from stdin (level still an arg)
