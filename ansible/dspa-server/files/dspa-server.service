@@ -1,0 +1,26 @@
+# example systemd service file to autostart worker after network
+# copy to /lib/systemd/system/
+# 0644 permissions
+#
+# sudo systemctl daemon-reload
+# sudo systemctl enable agent-server.service
+# ....after reboot or manual service start
+# sudo systemctl status agent-server.service
+#
+
+[Unit]
+Description=dspa5 server
+After=network-online.target
+
+[Service]
+Type=idle
+PassEnvironment=DSPA_SYNTH_CMD DSPA_DATA_DIR DSPA_FILE_EXT DSPA_PLAY_CMD
+EnvironmentFile=/etc/dspa-server.conf
+EnvironmentFile=/etc/environment
+
+ExecStart=/usr/local/bin/dspa-server
+User=www-data
+Group=www-data
+
+[Install]
+WantedBy=multi-user.target
