@@ -125,7 +125,7 @@ func (s *server) playWorker() {
 
 func synth(text string) (string, error) {
 	hash := sha256.Sum256([]byte(text))
-	cacheFile := path.Join(cacheDir, hex.EncodeToString(hash[:])+fileExt)
+	cacheFile := path.Join(cacheDir, hex.EncodeToString(hash[:])+"."+fileExt)
 
 	if _, err := os.Stat(cacheFile); err == nil {
 		return cacheFile, nil
