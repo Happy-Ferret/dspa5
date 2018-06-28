@@ -37,3 +37,13 @@ copied atomically to the cache and played from there.
 * Chrome extension like before
 * Server methods to subscribe to WAV (or MP3) files to announce in browser (DSPA_NO_SPEAK)
 * Controller to broadcast to discovered nodes, or a broadcast flag to broadcast to subnet
+
+
+# vendoring
+
+```
+go get github.com/tools/godep
+godep save ./...
+```
+
+magically ends up in vendor/

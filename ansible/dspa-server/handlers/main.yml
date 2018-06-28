@@ -3,6 +3,8 @@
   args:
    chdir: /usr/local/src/gocode/src/github.com/naggie/dspa5/server
   become: true
+  environment:
+    GOPATH: /usr/local/src/gocode
 
 - name: restart dspa-server
   become: yes
