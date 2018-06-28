@@ -47,7 +47,7 @@ type fragment struct {
 	last bool
 	// if an error occurred
 	synthErr error
-	playErr error
+	playErr  error
 }
 
 type server struct {
@@ -79,16 +79,16 @@ func (s *server) Speak(announcement *pb.Announcement, stream pb.Dspa5_SpeakServe
 	s.announcementLock.Lock()
 
 	// send start chime
-	s.synthQueue <- &fragment{"", startChimes[announcement.Level], playingChannel, false}
+	s.synthQueue <- &fragment{"", startChimes[announcement.Level], playingChannel, false, nil, nil}
 
 	// split message into text fragments to synthesise separately
 	texts := split(announcement.Message)
 	for _, text := range texts {
-		s.synthQueue <- &fragment{text, "", playingChannel, false}
+		s.synthQueue <- &fragment{text, "", playingChannel, false, nil, nil}
 	}
 
 	// send combined chime + stop marker to close channel on completion
-	s.synthQueue <- &fragment{"", stopChimes[announcement.Level], playingChannel, true}
+	s.synthQueue <- &fragment{"", stopChimes[announcement.Level], playingChannel, true, nil, nil}
 
 	s.announcementLock.Unlock()
 
@@ -165,7 +165,7 @@ func synth(text string) (string, error) {
 	return cacheFile, nil
 }
 
-func play(filepath string) err {
+func play(filepath string) error {
 	err := exec.Command("play", filepath).Run()
 
 	if err != nil {
