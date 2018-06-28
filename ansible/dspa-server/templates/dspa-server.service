@@ -20,7 +20,7 @@ EnvironmentFile=/etc/environment
 User={{ansible_user}}
 Group={{ansible_user}}
 
-ExecStart=/usr/local/bin/dspa-server
+ExecStart=/usr/local/src/gocode/src/github.com/naggie/dspa5/server/dspa-server
 User=www-data
 Group=www-data
 

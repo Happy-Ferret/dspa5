@@ -16,13 +16,13 @@
     group: "{{ansible_user}}"
     mode: 0755
   with_items:
-    - dspa5
+    - gocode/src/github.com/naggie/dspa5
     - EnglishHTSVoices
 
 - name: copy over dspa5 src
   git:
     repo: "git@github.com:naggie/dspa5.git"
-    dest: /usr/local/src/dspa5
+    dest: /usr/local/src/gocode/src/github.com/naggie/dspa5
   notify:
     - build dspa-server
     - restart dspa-server

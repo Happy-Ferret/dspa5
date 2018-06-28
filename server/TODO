@@ -12,3 +12,5 @@ ansible role to deploy
 sd01
 dspa-broadcaster
 client accept input from stdin (level still an arg)
+
+install to /usr/local/bin/dspa-server (go install?)
