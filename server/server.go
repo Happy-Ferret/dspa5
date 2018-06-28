@@ -195,8 +195,14 @@ func requireEnv(key string, description string) string {
 func main() {
 	tmpDir = path.Join(requireEnv("DSPA_DATA_DIR", "Directory to store tmp files and cache"), "tmp/")
 	cacheDir = path.Join(requireEnv("DSPA_DATA_DIR", ""), "cache/")
-	os.MkdirAll(tmpDir, os.ModePerm)
-	os.MkdirAll(cacheDir, os.ModePerm)
+
+	if err := os.MkdirAll(tmpDir, os.ModePerm); err != nil {
+		log.Fatalf("Could not create %v: %v", tmpDir, err)
+	}
+
+	if err := os.MkdirAll(cacheDir, os.ModePerm); err != nil {
+		log.Fatalf("Could not create %v: %v", cacheDir, err)
+	}
 
 	synthCmd = strings.Split(requireEnv("DSPA_SYNTH_CMD", "Command that accepts text on stdin and file to write on argv[1]"), " ")
 	playCmd = strings.Split(requireEnv("DSPA_PLAY_CMD", "Command to play an audio file"), " ")
