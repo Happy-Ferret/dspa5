@@ -1,10 +1,11 @@
 - name: build dspa-server
-  command: go build -o dspa-server server.go
+  command: go install
   args:
-   chdir: /usr/local/src/gocode/src/github.com/naggie/dspa5/server
+    chdir: /usr/local/src/gocode/src/github.com/naggie/dspa5/dspa-server
   become: true
   environment:
     GOPATH: /usr/local/src/gocode
+    GOBIN: /usr/local/bin/
 
 - name: restart dspa-server
   become: yes
