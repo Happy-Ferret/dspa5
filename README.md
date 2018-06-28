@@ -16,16 +16,18 @@ Fast, even on a Pi:
 
 
 # Environment variables
-Path to a script that accepts text to synthesise on STDIN and saves to wav
-file given as argument. Arguments can be added, space delimited.
 ```
+DSPA_DATA_DIR=/var/cache/dspa
 DSPA_TTS_CMD="synth.sh -o"
+DSPA_FILE_EXT=wav
+DSPA_PLAY_CMD=play
 ```
 
-Equivalent call using bash:
+Equivalent calls using bash:
 
 ```
 echo "Hello, world!" | synth.sh -o output.wav
+play output.wav
 
 ```
 Given filename is guaranteed not to exist and will be temporary. It will be

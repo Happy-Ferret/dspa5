@@ -45,6 +45,9 @@ type fragment struct {
 	// is this the last message for the request associated with playingChannel? If it
 	// is, will be closed after play. Can be an additional message with only this flag set.
 	last bool
+	// if an error occurred
+	synthErr error
+	playErr error
 }
 
 type server struct {
@@ -102,7 +105,7 @@ func (s *server) synthWorker() {
 		if f.text != "" {
 			// error can be safely ignored -- synth logs and play won't play
 			// nothing
-			f.wavFile, _ = synth(f.text)
+			f.wavFile, f.synthErr = synth(f.text)
 		}
 
 		s.playQueue <- f
@@ -114,7 +117,7 @@ func (s *server) playWorker() {
 		f.playingChannel <- f
 
 		if f.wavFile != "" {
-			play(f.wavFile)
+			f.playErr = play(f.wavFile)
 		}
 
 		if f.last {
@@ -162,12 +165,14 @@ func synth(text string) (string, error) {
 	return cacheFile, nil
 }
 
-func play(filepath string) {
+func play(filepath string) err {
 	err := exec.Command("play", filepath).Run()
 
 	if err != nil {
 		log.Printf("Error running play: %v\n", err)
 	}
+
+	return err
 }
 
 func split(message string) []string {
