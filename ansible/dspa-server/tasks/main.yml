@@ -10,14 +10,15 @@
 - name: create dspa5 install directories
   become: yes
   file:
-    path: "/usr/local/src/{{ item }}"
+    path: "{{ item }}"
     state: directory
     owner: "{{ansible_user}}"
     group: "{{ansible_user}}"
     mode: 0755
   with_items:
-    - gocode/src/github.com/naggie/dspa5
-    - EnglishHTSVoices
+    - /usr/local/src/gocode/src/github.com/naggie/dspa5
+    - /usr/local/src/EnglishHTSVoices
+    - /var/cache/dspa
 
 - name: copy over dspa5 src
   git:
@@ -33,6 +34,8 @@
     src: dspa-server.conf
     dest: /etc/
     mode: 0755
+  notify:
+    - restart dspa-server
 
 - name: Unarchive voice + engine
   unarchive:
