@@ -5,6 +5,7 @@ sd01
 dspa-broadcaster -- via sd01 and/or file and eventually also to ioterminals
 client accept input from stdin (level still an arg)
 error flag in fragment to return error status to client
+play command -- replace %v with file to allow effects pitch -290
 
 # Undecided
 repeat message for critical?

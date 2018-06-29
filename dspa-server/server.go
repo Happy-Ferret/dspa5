@@ -31,7 +31,7 @@ var stopChimes = map[pb.Announcement_Level]string{
 
 var tmpDir string
 var cacheDir string
-var synthCmd []string
+var synthCmd string
 var playCmd []string
 var fileExt string
 
@@ -143,11 +143,9 @@ func synth(text string) (string, error) {
 	// before https://go-review.googlesource.com/c/go/+/105675
 	tmpFile := f.Name() + fileExt
 	os.Rename(f.Name(), tmpFile)
-	defer os.Remove(tmpFile)
+	os.Remove(tmpFile)
 
-	args := make([]string, len(synthCmd)+1)
-	copy(args, synthCmd)
-	args[len(args)-1] = tmpFile
+	args := strings.Split(synthCmd + " " + tmpFile, " ")
 	cmd := exec.Command(args[0], args[1:]...)
 	cmd.Stdin = strings.NewReader(text)
 
@@ -209,7 +207,7 @@ func main() {
 		log.Fatalf("Could not create %v: %v", cacheDir, err)
 	}
 
-	synthCmd = strings.Split(requireEnv("DSPA_SYNTH_CMD", "Command that accepts text on stdin and file to write on argv[1]"), " ")
+	synthCmd = requireEnv("DSPA_SYNTH_CMD", "Command that accepts text on stdin and file to write on argv[1]")
 	playCmd = strings.Split(requireEnv("DSPA_PLAY_CMD", "Command to play an audio file"), " ")
 
 	fileExt = requireEnv("DSPA_FILE_EXT", "File extension of audio files with the dot")
