@@ -31,6 +31,7 @@ var stopChimes = map[pb.Announcement_Level]string{
 
 var tmpDir string
 var cacheDir string
+var chimeDir string
 var synthCmd string
 var playCmd string
 var fileExt string
@@ -195,18 +196,35 @@ func requireEnv(key string, description string) string {
 	return val
 }
 
+func extractChimes() {
+	files := make(map[string]bool)
+
+	for _, v := range(startChimes) {
+		files[v] = true
+	}
+
+	for _, v := range(stopChimes) {
+		files[v] = true
+	}
+
+	for file, _ := range files {
+		log.Printf("Extracting %v", file)
+	}
+}
+
 func main() {
 	dataDir := requireEnv("DSPA_DATA_DIR", "Directory to store tmp files and cache")
 	tmpDir = path.Join(dataDir, "tmp/")
 	cacheDir = path.Join(tmpDir, "cache/")
+	chimeDir = path.Join(tmpDir, "chimes/")
 
-	if err := os.MkdirAll(tmpDir, os.ModePerm); err != nil {
-		log.Fatalf("Could not create %v: %v", tmpDir, err)
+	for _, dir := range []string{dataDir, tmpDir, cacheDir, chimeDir} {
+		if err := os.MkdirAll(dir, os.ModePerm); err != nil {
+			log.Fatalf("Could not create %v: %v", dir, err)
+		}
 	}
 
-	if err := os.MkdirAll(cacheDir, os.ModePerm); err != nil {
-		log.Fatalf("Could not create %v: %v", cacheDir, err)
-	}
+	extractChimes()
 
 	synthCmd = requireEnv("DSPA_SYNTH_CMD", "Command that accepts text on stdin and file to write on argv[1]")
 	playCmd = requireEnv("DSPA_PLAY_CMD", "Command to play an audio file")
