@@ -1,5 +1,7 @@
 package main
 
+//go:generate go-bindata -pkg $GOPACKAGE -o assets.go chimes/
+
 import (
 	"crypto/sha256"
 	"encoding/hex"
