@@ -7,6 +7,9 @@ client accept input from stdin (level still an arg)
 error flag in fragment to return error status to client
 play command -- replace %v with file to allow effects pitch -290
 
+somehow vendor go-bindata
+include go generate in install process
+
 # Undecided
 repeat message for critical?
 say warning/critical/error on that level?

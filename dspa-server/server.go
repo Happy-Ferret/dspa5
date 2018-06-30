@@ -20,15 +20,15 @@ import (
 const port = ":40401"
 
 var startChimes = map[pb.Announcement_Level]string{
-	pb.Announcement_INFO:     "chimes/xerxes_start.ogg",
-	pb.Announcement_WARNING:  "chimes/xerxes_chime.ogg",
-	pb.Announcement_ERROR:    "chimes/xerxes_motion.wav",
-	pb.Announcement_CRITICAL: "chimes/xerxes_motion.wav",
+	pb.Announcement_INFO:     "xerxes_start.ogg",
+	pb.Announcement_WARNING:  "xerxes_chime.ogg",
+	pb.Announcement_ERROR:    "xerxes_motion.wav",
+	pb.Announcement_CRITICAL: "xerxes_motion.wav",
 }
 
 var stopChimes = map[pb.Announcement_Level]string{
-	pb.Announcement_INFO:     "chimes/xerxes_stop.ogg",
-	pb.Announcement_CRITICAL: "chimes/xerxes_breech.wav",
+	pb.Announcement_INFO:     "xerxes_stop.ogg",
+	pb.Announcement_CRITICAL: "xerxes_breech.wav",
 }
 
 var tmpDir string
@@ -82,7 +82,14 @@ func (s *server) Speak(announcement *pb.Announcement, stream pb.Dspa5_SpeakServe
 	s.announcementLock.Lock()
 
 	// send start chime
-	s.synthQueue <- &fragment{"", startChimes[announcement.Level], playingChannel, false, nil, nil}
+	s.synthQueue <- &fragment{
+		"",
+        path.Join(chimeDir, startChimes[announcement.Level]),
+        playingChannel,
+        false,
+        nil,
+        nil,
+	}
 
 	// split message into text fragments to synthesise separately
 	texts := split(announcement.Message)
@@ -91,7 +98,14 @@ func (s *server) Speak(announcement *pb.Announcement, stream pb.Dspa5_SpeakServe
 	}
 
 	// send combined chime + stop marker to close channel on completion
-	s.synthQueue <- &fragment{"", stopChimes[announcement.Level], playingChannel, true, nil, nil}
+	s.synthQueue <- &fragment{
+		"",
+        path.Join(chimeDir, stopChimes[announcement.Level]),
+        playingChannel,
+        true,
+        nil,
+        nil,
+	}
 
 	s.announcementLock.Unlock()
 
@@ -211,16 +225,12 @@ func extractChimes() {
 
 	for file, location := range files {
 		log.Printf("Extracting %v", file)
-		data, err := Asset(file)
+		data := MustAsset(path.Join("chimes", file))
+
+		err := ioutil.WriteFile(location, []byte(data), 0644)
 
 		if err != nil {
-			log.Printf("Error finding embedded %v: %v", file, err)
-		}
-
-		err = ioutil.WriteFile(location, []byte(data), 0644)
-
-		if err != nil {
-			log.Printf("Error extracting %v: %v", file, err)
+			log.Fatalf("Error extracting %v: %v", file, err)
 		}
 	}
 }
@@ -228,8 +238,8 @@ func extractChimes() {
 func main() {
 	dataDir := requireEnv("DSPA_DATA_DIR", "Directory to store tmp files and cache")
 	tmpDir = path.Join(dataDir, "tmp/")
-	cacheDir = path.Join(tmpDir, "cache/")
-	chimeDir = path.Join(tmpDir, "chimes/")
+	cacheDir = path.Join(dataDir, "cache/")
+	chimeDir = path.Join(dataDir, "chimes/")
 
 	for _, dir := range []string{dataDir, tmpDir, cacheDir, chimeDir} {
 		if err := os.MkdirAll(dir, os.ModePerm); err != nil {
