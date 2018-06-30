@@ -32,7 +32,7 @@ var stopChimes = map[pb.Announcement_Level]string{
 var tmpDir string
 var cacheDir string
 var synthCmd string
-var playCmd []string
+var playCmd string
 var fileExt string
 
 type fragment struct {
@@ -145,7 +145,7 @@ func synth(text string) (string, error) {
 	os.Rename(f.Name(), tmpFile)
 	os.Remove(tmpFile)
 
-	args := strings.Split(synthCmd + " " + tmpFile, " ")
+	args := strings.Split(synthCmd+" "+tmpFile, " ")
 	cmd := exec.Command(args[0], args[1:]...)
 	cmd.Stdin = strings.NewReader(text)
 
@@ -196,8 +196,9 @@ func requireEnv(key string, description string) string {
 }
 
 func main() {
-	tmpDir = path.Join(requireEnv("DSPA_DATA_DIR", "Directory to store tmp files and cache"), "tmp/")
-	cacheDir = path.Join(requireEnv("DSPA_DATA_DIR", ""), "cache/")
+	dataDir := requireEnv("DSPA_DATA_DIR", "Directory to store tmp files and cache")
+	tmpDir = path.Join(dataDir, "tmp/")
+	cacheDir = path.Join(tmpDir, "cache/")
 
 	if err := os.MkdirAll(tmpDir, os.ModePerm); err != nil {
 		log.Fatalf("Could not create %v: %v", tmpDir, err)
@@ -208,7 +209,7 @@ func main() {
 	}
 
 	synthCmd = requireEnv("DSPA_SYNTH_CMD", "Command that accepts text on stdin and file to write on argv[1]")
-	playCmd = strings.Split(requireEnv("DSPA_PLAY_CMD", "Command to play an audio file"), " ")
+	playCmd = requireEnv("DSPA_PLAY_CMD", "Command to play an audio file")
 
 	fileExt = requireEnv("DSPA_FILE_EXT", "File extension of audio files with the dot")
 
