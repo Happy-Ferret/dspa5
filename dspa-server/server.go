@@ -202,7 +202,7 @@ func split(message string) []string {
 	return strings.Split(message, "\n")
 }
 
-func requireEnv(key string, description string) string {
+func mustEnv(key string, description string) string {
 	val, ok := os.LookupEnv(key)
 
 	if !ok {
@@ -236,7 +236,7 @@ func extractChimes() {
 }
 
 func main() {
-	dataDir := requireEnv("DSPA_DATA_DIR", "Directory to store tmp files and cache")
+	dataDir := mustEnv("DSPA_DATA_DIR", "Directory to store tmp files and cache")
 	tmpDir = path.Join(dataDir, "tmp/")
 	cacheDir = path.Join(dataDir, "cache/")
 	chimeDir = path.Join(dataDir, "chimes/")
@@ -249,10 +249,10 @@ func main() {
 
 	extractChimes()
 
-	synthCmd = requireEnv("DSPA_SYNTH_CMD", "Command that accepts text on stdin and file to write on argv[1]")
-	playCmd = requireEnv("DSPA_PLAY_CMD", "Command to play an audio file")
+	synthCmd = mustEnv("DSPA_SYNTH_CMD", "Command that accepts text on stdin and file to write on argv[1]")
+	playCmd = mustEnv("DSPA_PLAY_CMD", "Command to play an audio file")
 
-	fileExt = requireEnv("DSPA_FILE_EXT", "File extension of audio files with the dot")
+	fileExt = mustEnv("DSPA_FILE_EXT", "File extension of audio files with the dot")
 
 	lis, err := net.Listen("tcp", "0.0.0.0:55223")
 
