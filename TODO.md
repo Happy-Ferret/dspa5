@@ -9,6 +9,7 @@ play command -- replace %v with file to allow effects pitch -290
 
 somehow vendor go-bindata
 include go generate in install process
+https://github.com/upx/upx
 
 # Undecided
 repeat message for critical?

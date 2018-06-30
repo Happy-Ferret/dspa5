@@ -181,7 +181,7 @@ func synth(text string) (string, error) {
 }
 
 func play(filepath string) error {
-	err := exec.Command("play", filepath).Run()
+	err := exec.Command(playCmd, filepath).Run()
 
 	if err != nil {
 		log.Printf("Error running play: %v\n", err)
