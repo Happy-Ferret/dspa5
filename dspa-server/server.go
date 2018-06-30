@@ -197,18 +197,29 @@ func requireEnv(key string, description string) string {
 }
 
 func extractChimes() {
-	files := make(map[string]bool)
+	files := make(map[string]string)
 
-	for _, v := range(startChimes) {
-		files[v] = true
+	for _, v := range startChimes {
+		files[v] = path.Join(chimeDir, v)
 	}
 
-	for _, v := range(stopChimes) {
-		files[v] = true
+	for _, v := range stopChimes {
+		files[v] = path.Join(chimeDir, v)
 	}
 
-	for file, _ := range files {
+	for file, location := range files {
 		log.Printf("Extracting %v", file)
+		data, err := Asset(file)
+
+		if err != nil {
+			log.Printf("Error finding embedded %v: %v", file, err)
+		}
+
+		err = ioutil.WriteFile(location, []byte(data), 0644)
+
+		if err != nil {
+			log.Printf("Error extracting %v: %v", file, err)
+		}
 	}
 }
 
