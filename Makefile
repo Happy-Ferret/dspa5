@@ -1,5 +1,3 @@
-# TODO: make allarch -- linux/mac/pi etc
-# # eg GOOS=linux GOARCH=arm GOARM=5 go build -a (could call this makefile several times)
 all: dist
 
 grpc:
