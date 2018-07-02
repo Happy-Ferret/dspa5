@@ -14,3 +14,8 @@ GOOS=darwin GOARCH=amd64 make
 mkdir -p dist/darwin-amd64/
 mv dist/dspa-server dist/darwin-amd64/
 mv dist/dspa-client dist/darwin-amd64/
+
+#GOOS=windows GOARCH=amd64 make
+#mkdir -p dist/windows-amd64/
+#mv dist/dspa-server dist/windows-amd64/
+#mv dist/dspa-client dist/windows-amd64/
