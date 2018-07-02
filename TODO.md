@@ -1,16 +1,15 @@
 cache GC (limit to 1GB, LRU mtime) (tmpreaper?)
-go-binpack (?) https://github.com/jteeuwen/go-bindata to embed chimes
-go get github.com/naggie/dspa5/... should install dspa-server and dspa-client -- multiple root main?
 sd01
-dspa-broadcaster -- via sd01 and/or file and eventually also to ioterminals
 client accept input from stdin (level still an arg)
 error flag in fragment to return error status to client
-play command -- replace %v with file to allow effects pitch -290
-
 somehow vendor go-bindata
-include go generate in install process
-https://github.com/upx/upx
+https://github.com/upx/upx in distribution pipeline
+getname method? (maybe a setname method too, or just load from env)
 
 # Undecided
 repeat message for critical?
 say warning/critical/error on that level?
+
+dspa-broadcaster -- via sd01 and/or file and eventually also to ioterminals
+dspa-scan -- look for dspa servers, save to .dspa-manifest.txt -- then dspa-client looks in there as alternative to broadcaster or broadcast flag
+speak.sh do sox effects pitch -290
