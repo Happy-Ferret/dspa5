@@ -25,17 +25,17 @@
     repo: "git@github.com:naggie/dspa5.git"
     dest: /usr/local/src/gocode/src/github.com/naggie/dspa5
   notify:
-    - build dspa-server
-    - restart dspa-server
+    - build dspa-speaker
+    - restart dspa-speaker
 
 - name: copy config
   become: yes
   copy:
-    src: dspa-server.conf
+    src: dspa-speaker.conf
     dest: /etc/
     mode: 0755
   notify:
-    - restart dspa-server
+    - restart dspa-speaker
 
 - name: Unarchive voice + engine
   unarchive:
@@ -56,18 +56,18 @@
     dest: /usr/local/src/EnglishHTSVoices/
     mode: 0755
 
-- name: Copy dspa-server systemd service file
+- name: Copy dspa-speaker systemd service file
   become: yes
   template:
-    src: dspa-server.service
+    src: dspa-speaker.service
     dest: /lib/systemd/system/
     mode: 0644
   notify:
     - reload systemd config
 
-- name: enable dspa-server at boot
+- name: enable dspa-speaker at boot
   become: yes
   systemd:
-    name: dspa-server
+    name: dspa-speaker
     enabled: yes
     masked: no

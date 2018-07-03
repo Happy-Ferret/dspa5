@@ -10,19 +10,19 @@ grpc:
 	dspa5/*.proto
 
 assets:
-	cd dspa-server && go generate
+	cd dspa-speaker && go generate
 
 server: grpc assets
-	cd dspa-server && go build -ldflags="-s -w"
+	cd dspa-speaker && go build -ldflags="-s -w"
 
 client: grpc assets
 	cd dspa-client && go build -ldflags="-s -w"
 
 pack: client server
-	upx dspa-server/dspa-server
+	upx dspa-speaker/dspa-speaker
 	upx dspa-client/dspa-client
 
 dist: pack
 	mkdir -p dist && \
-		mv dspa-server/dspa-server dist/
+		mv dspa-speaker/dspa-speaker dist/
 		mv dspa-client/dspa-client dist/

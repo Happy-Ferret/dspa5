@@ -12,7 +12,6 @@ split up modules a bit
 # Undecided
 repeat message for critical?
 say warning/critical/error on that level?
-rename server to speaker?
 dspa-broadcaster -- via sd01 and/or file and eventually also to ioterminals
 dspa-scan -- look for dspa servers, save to .dspa-manifest.txt -- then dspa-client looks in there as alternative to broadcaster or broadcast flag
 speak.sh do sox effects pitch -290

@@ -15,11 +15,11 @@ After=network-online.target
 [Service]
 Type=idle
 PassEnvironment=DSPA_SYNTH_CMD DSPA_DATA_DIR DSPA_FILE_EXT DSPA_PLAY_CMD
-EnvironmentFile=/etc/dspa-server.conf
+EnvironmentFile=/etc/dspa-speaker.conf
 EnvironmentFile=/etc/environment
 User={{ansible_user}}
 Group={{ansible_user}}
-ExecStart=/usr/local/src/gocode/src/github.com/naggie/dspa5/server/dspa-server
+ExecStart=/usr/local/src/gocode/src/github.com/naggie/dspa5/server/dspa-speaker
 
 [Install]
 WantedBy=multi-user.target
