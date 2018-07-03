@@ -1,17 +1,15 @@
-# Requirements
+# Features
 
-Fast, even on a Pi:
-* Pipelined (chime/synth/play)
-* cached
+* Pipelined and caching, fast even on a Pi
+* Broadcasting (whole network, house, room)
+* Auto discovery of speakers
 
-
-# Ideas
 
 # Implementation
 * Go
 * Flite arctic slt (via ansible, not included -- ser binary via env)
 * GRPC
-* DS01
+* SD01
 * https://github.com/faiface/beep for playback (instead of sox play) if possible
 
 
