@@ -5,6 +5,7 @@ error flag in fragment to return error status to client
 somehow vendor go-bindata
 https://github.com/upx/upx in distribution pipeline
 getname method? (maybe a setname method too, or just load from env)
+hub release script to publish all (alter ansible script to use release)
 
 # Undecided
 repeat message for critical?
