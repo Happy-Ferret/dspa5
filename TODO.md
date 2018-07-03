@@ -6,6 +6,8 @@ somehow vendor go-bindata
 https://github.com/upx/upx in distribution pipeline
 getname method? (maybe a setname method too, or just load from env)
 hub release script to publish all (alter ansible script to use release)
+use github releases with ansible
+split up modules a bit
 
 # Undecided
 repeat message for critical?

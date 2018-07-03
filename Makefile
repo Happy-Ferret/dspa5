@@ -1,5 +1,7 @@
 all: dist
 
+# note -ldflags="-s -w" is used to strip debugging tables from executables to reduce file size
+
 grpc:
 	protoc -I/usr/local/include -I. \
 	-I${GOPATH}/src \
@@ -11,10 +13,10 @@ assets:
 	cd dspa-server && go generate
 
 server: grpc assets
-	cd dspa-server && go build
+	cd dspa-server && go build -ldflags="-s -w"
 
 client: grpc assets
-	cd dspa-client && go build
+	cd dspa-client && go build -ldflags="-s -w"
 
 pack: client server
 	upx dspa-server/dspa-server
