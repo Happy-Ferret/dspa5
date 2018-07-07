@@ -5,6 +5,14 @@ service Dspa5 {
     // system will transform message into fragments and stream them back as they
     // are announced.
     rpc Speak (Announcement) returns (stream Announcement);
+//    rpc SetName(Name) returns (Empty);
+//    rpc GetName(Empty) returns (Name);
+}
+
+message Empty {}
+
+message Name {
+    string name = 1;
 }
 
 // similar to a python log handler
