@@ -6,6 +6,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	pb "github.com/naggie/dspa5/dspa5"
+	sd01 "github.com/naggie/sd01/go"
 	"google.golang.org/grpc"
 	"io/ioutil"
 	"log"
@@ -266,7 +267,11 @@ func main() {
 	go s.synthWorker()
 	go s.playWorker()
 
+	announcer := sd01.NewAnnouncer("dspa5speaker", 55223)
+	announcer.Start()
+
 	grpcServer := grpc.NewServer()
 	pb.RegisterDspa5Server(grpcServer, s)
 	grpcServer.Serve(lis)
+	announcer.Stop()
 }
