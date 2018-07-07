@@ -26,3 +26,7 @@ dist: pack
 	mkdir -p dist && \
 		mv dspa-speaker/dspa-speaker dist/
 		mv dspa-client/dspa-client dist/
+
+update:
+# dep init created vendor directory!
+	dep ensure -update
