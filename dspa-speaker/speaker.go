@@ -84,11 +84,11 @@ func (s *server) Speak(announcement *pb.Announcement, stream pb.Dspa5_SpeakServe
 	// send start chime
 	s.synthQueue <- &fragment{
 		"",
-        path.Join(chimeDir, startChimes[announcement.Level]),
-        playingChannel,
-        false,
-        nil,
-        nil,
+		path.Join(chimeDir, startChimes[announcement.Level]),
+		playingChannel,
+		false,
+		nil,
+		nil,
 	}
 
 	// split message into text fragments to synthesise separately
@@ -100,11 +100,11 @@ func (s *server) Speak(announcement *pb.Announcement, stream pb.Dspa5_SpeakServe
 	// send combined chime + stop marker to close channel on completion
 	s.synthQueue <- &fragment{
 		"",
-        path.Join(chimeDir, stopChimes[announcement.Level]),
-        playingChannel,
-        true,
-        nil,
-        nil,
+		path.Join(chimeDir, stopChimes[announcement.Level]),
+		playingChannel,
+		true,
+		nil,
+		nil,
 	}
 
 	s.announcementLock.Unlock()
