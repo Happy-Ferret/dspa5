@@ -10,6 +10,12 @@
     - /usr/local/src/EnglishHTSVoices
     - /var/cache/dspa
 
+- name: download dspa-speaker
+  get_url:
+    url: https://github.com/naggie/dspa5/releases/download/v0.2/dspa-speaker-linux-amd64
+    dest: /usr/local/bin/dspa-speaker
+    mode: 0755
+
 - name: copy config
   become: yes
   copy:

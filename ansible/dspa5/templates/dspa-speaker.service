@@ -9,7 +9,7 @@
 #
 
 [Unit]
-Description=dspa5 server
+Description=dspa5 speaker
 After=network-online.target
 
 [Service]
@@ -19,7 +19,7 @@ EnvironmentFile=/etc/dspa-speaker.conf
 EnvironmentFile=/etc/environment
 User={{ansible_user}}
 Group={{ansible_user}}
-ExecStart=/usr/local/src/gocode/src/github.com/naggie/dspa5/server/dspa-speaker
+ExecStart=/usr/local/bin/dspa-speaker
 
 [Install]
 WantedBy=multi-user.target

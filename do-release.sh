@@ -20,7 +20,7 @@ ln -s ../darwin-amd64/dspa-speaker dist/tmp/dspa-speaker-darwin-amd64
 ln -s ../darwin-amd64/dspa-client dist/tmp/dspa-client-darwin-amd64
 
 
-hub release create -d \
+hub release create \
     -a dist/tmp/dspa-speaker-linux-arm7#"DSPA speaker linux-arm7" \
     -a dist/tmp/dspa-client-linux-arm7#"DSPA client linux-arm7" \
     -a dist/tmp/dspa-speaker-linux-amd64#"DSPA speaker linux-amd64" \
