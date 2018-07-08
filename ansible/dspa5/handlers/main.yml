@@ -1,12 +1,3 @@
-- name: build dspa-speaker
-  command: go install
-  args:
-    chdir: /usr/local/src/gocode/src/github.com/naggie/dspa5/dspa-speaker
-  become: true
-  environment:
-    GOPATH: /usr/local/src/gocode
-    GOBIN: /usr/local/bin/
-
 - name: restart dspa-speaker
   become: yes
   systemd:

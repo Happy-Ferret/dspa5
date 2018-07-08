@@ -2,18 +2,20 @@
 
 * Pipelined and caching, fast even on a Pi
 * Broadcasting (whole network, house, room)
+* Chimes based on severity
 * Auto discovery of speakers
 
 
 # Implementation
 * Go
 * Flite arctic slt (via ansible, not included -- ser binary via env)
-* GRPC
-* SD01
-* https://github.com/faiface/beep for playback (instead of sox play) if possible
-
+* GRPC for protocol
+* [sd01](https://github.com/naggie/sd01) for service discovery
+* Go dep for vendoring
 
 # Environment variables
+
+## dspa-speaker
 ```
 DSPA_DATA_DIR=/var/cache/dspa
 DSPA_TTS_CMD="synth.sh -o"
@@ -34,6 +36,6 @@ copied atomically to the cache and played from there.
 
 # Possible further work
 
-* Chrome extension like before
-* Server methods to subscribe to WAV (or MP3) files to announce in browser (DSPA_NO_SPEAK)
-* Controller to broadcast to discovered nodes, or a broadcast flag to broadcast to subnet
+* Chrome extension like the original DSPA
+* Architecture to subscribe to WAV (or MP3)
+* Broadcaster to broadcast to discovered/known nodes

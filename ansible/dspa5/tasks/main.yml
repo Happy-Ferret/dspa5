@@ -1,13 +1,4 @@
-- name: Install packages
-  apt:
-    name: "{{ item }}"
-    state: latest
-  become: yes
-  with_items:
-    - golang
-    - build-essential
-
-- name: create dspa5 install directories
+- name: create dspa5/install directories
   become: yes
   file:
     path: "{{ item }}"
@@ -16,17 +7,8 @@
     group: "{{ansible_user}}"
     mode: 0755
   with_items:
-    - /usr/local/src/gocode/src/github.com/naggie/dspa5
     - /usr/local/src/EnglishHTSVoices
     - /var/cache/dspa
-
-- name: copy over dspa5 src
-  git:
-    repo: "git@github.com:naggie/dspa5.git"
-    dest: /usr/local/src/gocode/src/github.com/naggie/dspa5
-  notify:
-    - build dspa-speaker
-    - restart dspa-speaker
 
 - name: copy config
   become: yes
