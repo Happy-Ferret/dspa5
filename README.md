@@ -4,6 +4,7 @@
 * Broadcasting (whole network, house, room)
 * Chimes based on severity
 * Auto discovery of speakers
+* Synchronisation of speech on nearby displays (soon)
 
 
 # Implementation
