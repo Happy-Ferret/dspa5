@@ -40,3 +40,9 @@ copied atomically to the cache and played from there.
 * Chrome extension like the original DSPA
 * Architecture to subscribe to WAV (or MP3)
 * Broadcaster to broadcast to discovered/known nodes
+
+# Deployment
+
+See included ansible role. It is recommended that the local DNS server has
+`dspa` resolve to the main broadcaster or single speaker.
+
