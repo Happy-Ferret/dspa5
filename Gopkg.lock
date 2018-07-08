@@ -17,7 +17,7 @@
   branch = "master"
   name = "github.com/naggie/sd01"
   packages = ["go"]
-  revision = "f4a1e53cf8ae4570246255ef97c38b893ff769aa"
+  revision = "a88188c84b2da86e5844d2e96ec295fc77a67062"
 
 [[projects]]
   branch = "master"
