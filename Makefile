@@ -13,11 +13,11 @@ grpc:
 assets:
 	cd dspa-speaker && go generate
 
-speaker: grpc assets
+speaker:
 	cd dspa-speaker && go build -ldflags="-s -w"
 	upx -q dspa-speaker/dspa-speaker
 
-client: grpc assets
+client:
 	cd dspa-client && go build -ldflags="-s -w"
 	upx -q  dspa-client/dspa-client
 
