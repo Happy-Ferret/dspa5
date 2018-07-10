@@ -53,7 +53,7 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
 	defer cancel()
 
-	stream, err := client.Speak(ctx, &pb.Announcement{message, level})
+	stream, err := client.Speak(ctx, &pb.Announcement{Message: message, Level: level})
 
 	if err != nil {
 		log.Fatalf("Failed to announce: %v", err)

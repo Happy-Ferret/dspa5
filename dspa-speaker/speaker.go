@@ -112,7 +112,7 @@ func (s *server) Speak(announcement *pb.Announcement, stream pb.Dspa5_SpeakServe
 
 	// read announcement fragments back to the client as they happen
 	for f := range playingChannel {
-		stream.Send(&pb.Announcement{f.text, announcement.Level})
+		stream.Send(&pb.Announcement{Message: f.text, Level: announcement.Level})
 	}
 
 	return nil
