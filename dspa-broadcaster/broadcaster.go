@@ -9,7 +9,6 @@ import (
 	"time"
 	sd01 "github.com/naggie/sd01/go"
 	"sync"
-	"fmt"
 	"net"
 )
 
@@ -50,8 +49,7 @@ func (s *server) Speak(announcement *pb.Announcement, stream pb.Dspa5_SpeakServe
 	fragments := make(chan *pb.Fragment, 10)
 
 	for i, service := range services {
-		// TODO make Service implement Stringer
-		serverAddr := fmt.Sprintf("%v:%v", service.Addr.IP, service.Port)
+		serverAddr := service.String()
 		// listen to first one only
 		if i == 0 {
 			go speakUpstream(serverAddr, announcement, fragments)
