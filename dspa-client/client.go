@@ -60,7 +60,7 @@ func main() {
 	}
 
 	for {
-		announcement, err := stream.Recv()
+		fragment, err := stream.Recv()
 		if err == io.EOF {
 			break
 		}
@@ -69,6 +69,6 @@ func main() {
 			log.Fatalf("Failed to stream: %v", err)
 		}
 
-		fmt.Println(announcement.Message)
+		fmt.Println(fragment.Text)
 	}
 }

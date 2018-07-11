@@ -41,6 +41,6 @@ func (s *server) Speak(announcement pb.Announcement, stream pb.Dspa5_SpeakServer
 	}
 }
 
-func speakUpstream(host string, announcement pb.Announcement, replies chan<- pb.Announcement) {
+func speakUpstream(host string, announcement pb.Announcement, replies chan<- pb.Fragment) {
 
 }

@@ -4,7 +4,7 @@ package dspa5;
 service Dspa5 {
     // system will transform message into fragments and stream them back as they
     // are announced.
-    rpc Speak (Announcement) returns (stream Announcement);
+    rpc Speak (Announcement) returns (stream Fragment);
 //    rpc SetName(Name) returns (Empty);
 //    rpc GetName(Empty) returns (Name);
 }
@@ -35,4 +35,11 @@ message Announcement {
     }
 
     Level level = 2;
+}
+
+// message fragments as they happen
+message Fragment {
+    bool chime = 1;
+    string text = 2;
+    bool error = 3;
 }

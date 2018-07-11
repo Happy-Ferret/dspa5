@@ -66,9 +66,9 @@ type server struct {
 
 func NewServer() *server {
 	return &server{
-		&sync.Mutex{},
-		make(chan *fragment, 10),
-		make(chan *fragment, 10),
+		announcementLock: &sync.Mutex{},
+		synthQueue: make(chan *fragment, 10),
+		playQueue: make(chan *fragment, 10),
 	}
 }
 
@@ -112,7 +112,11 @@ func (s *server) Speak(announcement *pb.Announcement, stream pb.Dspa5_SpeakServe
 
 	// read announcement fragments back to the client as they happen
 	for f := range playingChannel {
-		stream.Send(&pb.Announcement{Message: f.text, Level: announcement.Level})
+		stream.Send(&pb.Fragment{
+			Chime: f.text == "",
+			Text: f.text,
+			Error: f.synthErr != nil || f.playErr != nil,
+		})
 	}
 
 	return nil
