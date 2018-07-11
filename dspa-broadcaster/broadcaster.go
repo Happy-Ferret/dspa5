@@ -19,12 +19,12 @@ func main() {
 	s := NewServer(discoverer)
 	grpcServer := grpc.NewServer()
 	pb.RegisterDspa5Server(grpcServer, s)
-	lis, err := net.Listen("tcp", "0.0.0.0:55223")
+	lis, err := net.Listen("tcp", "0.0.0.0:55224")
 
 	if err == nil {
-		log.Printf("Listening on port 55223")
+		log.Printf("Listening on port 55224")
 	} else {
-		log.Fatalf("Failed to listen on port 55223")
+		log.Fatalf("Failed to listen on port 55224")
 	}
 
 	grpcServer.Serve(lis)
