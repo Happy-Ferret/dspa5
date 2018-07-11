@@ -17,7 +17,7 @@
   branch = "master"
   name = "github.com/naggie/sd01"
   packages = ["go"]
-  revision = "a88188c84b2da86e5844d2e96ec295fc77a67062"
+  revision = "df009a60ed431535b84355ce60f9a368bda43ced"
 
 [[projects]]
   branch = "master"
@@ -31,7 +31,7 @@
     "internal/timeseries",
     "trace"
   ]
-  revision = "292b43bbf7cb8d35ddf40f8d5100ef3837cced3f"
+  revision = "cffdcf672aee934982473246bc7e9a8ba446aa9b"
 
 [[projects]]
   branch = "master"

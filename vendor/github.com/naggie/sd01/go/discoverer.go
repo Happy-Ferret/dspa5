@@ -105,7 +105,7 @@ func (d *Discoverer) run(conn net.PacketConn) {
 					} else if service == d.name {
 						d.servicesMu.Lock()
 						discovered := Service{
-							Addr:     addr.(*net.UDPAddr),
+							IP:       addr.(*net.UDPAddr).IP,
 							Port:     portnum,
 							LastSeen: time.Now(),
 						}
