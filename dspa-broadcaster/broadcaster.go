@@ -48,6 +48,8 @@ func (s *server) Speak(announcement *pb.Announcement, stream pb.Dspa5_SpeakServe
 	services := s.discoverer.GetServices()
 	fragments := make(chan *pb.Fragment, 10)
 
+	log.Printf("Broadcasting message to %v speakers and 0 displays", len(services))
+
 	for i, service := range services {
 		serverAddr := service.String()
 		// listen to first one only
