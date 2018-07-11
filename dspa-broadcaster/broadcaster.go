@@ -51,7 +51,7 @@ func (s *server) Speak(announcement *pb.Announcement, stream pb.Dspa5_SpeakServe
 
 	for i, service := range services {
 		// TODO make Service implement Stringer
-		serverAddr := fmt.Sprintf("%v:%v", service.Addr, service.Port)
+		serverAddr := fmt.Sprintf("%v:%v", service.Addr.IP, service.Port)
 		// listen to first one only
 		if i == 0 {
 			go speakUpstream(serverAddr, announcement, fragments)
