@@ -69,6 +69,12 @@ func main() {
 			log.Fatalf("Failed to stream: %v", err)
 		}
 
-		fmt.Println(fragment.Text)
+		if fragment.Error {
+			fmt.Println("[ERROR]")
+		} else if fragment.Chime {
+			fmt.Println("[CHIME]")
+		} else {
+			fmt.Println(fragment.Text)
+		}
 	}
 }
