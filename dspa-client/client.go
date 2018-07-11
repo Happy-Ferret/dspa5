@@ -26,7 +26,8 @@ func main() {
 	serverAddr, ok := os.LookupEnv("DSPA_SERVER_ADDR")
 
 	if !ok {
-		log.Fatalf("DSPA_SERVER_ADDR not set")
+		log.Printf("DSPA_SERVER_ADDR not set, defaulting to dspa:55224 which is recommended broadcaster address")
+		serverAddr = "dspa:55224"
 	}
 
 	var opts []grpc.DialOption
