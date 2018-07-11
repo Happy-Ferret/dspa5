@@ -6,6 +6,7 @@ getname method? (maybe a setname method too, or just load from env)
 split up modules into more than one main file where appropriate
 dspa-client -- default to "dspa" host, warn that DSPA_SPEAKER_ADDR should be set if fails
 dspa-broadcaster -- via sd01 and/or file and eventually also to ioterminals
+client should say when there's an error'd fragment
 
 # Undecided
 repeat message for critical?
