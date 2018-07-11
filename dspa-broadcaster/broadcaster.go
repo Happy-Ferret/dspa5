@@ -6,51 +6,68 @@ import (
 	"google.golang.org/grpc"
 	"io"
 	"log"
-	"os"
-	"strings"
 	"time"
 	sd01 "github.com/naggie/sd01/go"
+	"sync"
+	"fmt"
+	"net"
 )
 
 func main() {
-	discoverer := sd01.NewDiscoverer('dspa5speaker')
+	discoverer := sd01.NewDiscoverer("dspa5speaker")
 	discoverer.Start()
 
-	server := NewServer(discoverer)
+	s := NewServer(discoverer)
+	grpcServer := grpc.NewServer()
+	pb.RegisterDspa5Server(grpcServer, s)
+	lis, err := net.Listen("tcp", "0.0.0.0:55223")
+
+	if err == nil {
+		log.Printf("Listening on port 55223")
+	} else {
+		log.Fatalf("Failed to listen on port 55223")
+	}
+
+	grpcServer.Serve(lis)
 }
 
 type server struct {
+	discoverer *sd01.Discoverer
 	// used to serialise announcements. Lock is used as insertion is
 	// nonblocking, easier than using channel.
 	announcementLock *sync.Mutex
 }
 
-func NewServer(discoverer sd01.Discoverer) *server {
+func NewServer(discoverer *sd01.Discoverer) *server {
 	return &server{
 		discoverer: discoverer,
 		announcementLock: &sync.Mutex{},
 	}
 }
 
-func (s *server) Speak(announcement pb.Announcement, stream pb.Dspa5_SpeakServer) error {
-	hosts := s.discoverer.GetServices()
-	fragments := make(chan pb.Fragment, 10)
+func (s *server) Speak(announcement *pb.Announcement, stream pb.Dspa5_SpeakServer) error {
+	services := s.discoverer.GetServices()
+	fragments := make(chan *pb.Fragment, 10)
 
-	for i, host := range hosts {
+	for i, service := range services {
+		// TODO make Service implement Stringer
+		serverAddr := fmt.Sprintf("%v:%v", service.Addr, service.Port)
 		// listen to first one only
 		if i == 0 {
-			speakUpstream(host, announcement, fragments)
+			go speakUpstream(serverAddr, announcement, fragments)
 		} else {
-			speakUpstream(host, announcement, nil)
+			go speakUpstream(serverAddr, announcement, nil)
 		}
 	}
 
 	for fragment := range fragments {
-		stream.send(fragment)
+		stream.Send(fragment)
 	}
+
+	return nil
 }
 
-func speakUpstream(host string, announcement pb.Announcement, fragments chan<- pb.Fragment) error {
+func speakUpstream(serverAddr string, announcement *pb.Announcement, fragments chan<- *pb.Fragment) error {
 	if fragments != nil {
 		defer close(fragments)
 	}
@@ -93,5 +110,5 @@ func speakUpstream(host string, announcement pb.Announcement, fragments chan<- p
 		}
 
 	}
-
+	return nil
 }
