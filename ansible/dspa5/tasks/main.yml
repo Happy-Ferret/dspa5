@@ -19,6 +19,7 @@
     "dspa-speaker": "https://github.com/naggie/dspa5/releases/download/{{dspa_version}}/dspa-speaker-linux-amd64"
     "dspa-broadcaster": "https://github.com/naggie/dspa5/releases/download/{{dspa_version}}/dspa-broadcaster-linux-amd64"
     "dspa-client": "https://github.com/naggie/dspa5/releases/download/{{dspa_version}}/dspa-client-linux-amd64"
+  become: true
 
 - name: copy config
   become: yes
@@ -48,18 +49,27 @@
     dest: /usr/local/src/EnglishHTSVoices/
     mode: 0755
 
-- name: Copy dspa-speaker systemd service file
+- name: Copy systemd service files
   become: yes
   template:
-    src: dspa-speaker.service
+    src: "{{item}}"
     dest: /lib/systemd/system/
     mode: 0644
   notify:
     - reload systemd config
+  with_items:
+    - dspa-speaker
+    - dspa-broadcaster
 
-- name: enable dspa-speaker at boot
+# technically should be handler but consequence is low
+- name: enable + restart services
   become: yes
   systemd:
-    name: dspa-speaker
+    name: "{{item}}"
     enabled: yes
     masked: no
+    state: restarted
+    daemon_reload: yes
+  with_items:
+    - dspa-speaker
+    - dspa-broadcaster
