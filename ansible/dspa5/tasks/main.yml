@@ -27,8 +27,6 @@
     src: dspa-speaker.conf
     dest: /etc/
     mode: 0755
-  notify:
-    - restart dspa-speaker
 
 - name: Unarchive voice + engine
   unarchive:
@@ -52,11 +50,9 @@
 - name: Copy systemd service files
   become: yes
   template:
-    src: "{{item}}"
+    src: "{{item}}.service"
     dest: /lib/systemd/system/
     mode: 0644
-  notify:
-    - reload systemd config
   with_items:
     - dspa-speaker
     - dspa-broadcaster
