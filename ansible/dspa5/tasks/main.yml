@@ -15,6 +15,7 @@
     url: "{{item.value}}"
     dest: "/usr/local/bin/{{item.key}}"
     mode: 0755
+    force: yes
   with_dict:
     "dspa-speaker": "https://github.com/naggie/dspa5/releases/download/{{dspa_version}}/dspa-speaker-linux-amd64"
     "dspa-broadcaster": "https://github.com/naggie/dspa5/releases/download/{{dspa_version}}/dspa-broadcaster-linux-amd64"
