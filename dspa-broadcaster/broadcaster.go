@@ -10,6 +10,7 @@ import (
 	sd01 "github.com/naggie/sd01/go"
 	"sync"
 	"net"
+	"errors"
 )
 
 func main() {
@@ -47,6 +48,11 @@ func NewServer(discoverer *sd01.Discoverer) *server {
 func (s *server) Speak(announcement *pb.Announcement, stream pb.Dspa5_SpeakServer) error {
 	services := s.discoverer.GetServices()
 	fragments := make(chan *pb.Fragment, 10)
+
+	if len(services) < 1 {
+		log.Printf("No connected speakers to broadcast to")
+		return errors.New("No connected speakers to broadcast to")
+	}
 
 	log.Printf("Broadcasting message to %v speakers and 0 displays", len(services))
 

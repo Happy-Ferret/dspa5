@@ -4,6 +4,7 @@ somehow vendor go-bindata (add to gopkg required)
 getname method? (maybe a setname method too, or just load from env)
 split up modules into more than one main file where appropriate
 ansible -- make broadcaster optional (or disabled/endabled) via vars
+also synchrnously broadcast to ioterminal signage
 
 # Undecided
 broadcaster -- hard defined hosts file? arg to enable or disable sd01?
