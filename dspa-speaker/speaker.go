@@ -7,6 +7,7 @@ import (
 	"encoding/hex"
 	pb "github.com/naggie/dspa5/dspa5"
 	sd01 "github.com/naggie/sd01/go"
+	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"io/ioutil"
 	"log"
@@ -62,13 +63,15 @@ type server struct {
 	synthQueue chan *fragment
 	// play chime or speech
 	playQueue chan *fragment
+	name string
 }
 
-func NewServer() *server {
+func NewServer(name string) *server {
 	return &server{
 		announcementLock: &sync.Mutex{},
 		synthQueue: make(chan *fragment, 10),
 		playQueue: make(chan *fragment, 10),
+		name: name,
 	}
 }
 
@@ -120,6 +123,10 @@ func (s *server) Speak(announcement *pb.Announcement, stream pb.Dspa5_SpeakServe
 	}
 
 	return nil
+}
+
+func (s *server) GetName(ctx context.Context, e *pb.Empty) (*pb.Name, error) {
+	return &pb.Name{s.name}, nil
 }
 
 func (s *server) synthWorker() {
@@ -241,6 +248,7 @@ func extractChimes() {
 }
 
 func main() {
+	name := mustEnv("DSPA_NAME", "Name shown on network")
 	dataDir := mustEnv("DSPA_DATA_DIR", "Directory to store tmp files and cache")
 	tmpDir = path.Join(dataDir, "tmp/")
 	cacheDir = path.Join(dataDir, "cache/")
@@ -267,7 +275,7 @@ func main() {
 		log.Fatalf("Failed to listen on port 55223")
 	}
 
-	s := NewServer()
+	s := NewServer(name)
 	go s.synthWorker()
 	go s.playWorker()
 

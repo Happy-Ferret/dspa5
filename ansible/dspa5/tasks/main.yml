@@ -24,7 +24,7 @@
 
 - name: copy config
   become: yes
-  copy:
+  template:
     src: dspa-speaker.conf
     dest: /etc/
     mode: 0755

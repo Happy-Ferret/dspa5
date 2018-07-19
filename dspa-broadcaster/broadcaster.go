@@ -74,6 +74,10 @@ func (s *server) Speak(announcement *pb.Announcement, stream pb.Dspa5_SpeakServe
 	return nil
 }
 
+func (s *server) GetName(ctx context.Context, e *pb.Empty) (*pb.Name, error) {
+	return &pb.Name{"DSPA Broadcaster"}, nil
+}
+
 func speakUpstream(serverAddr string, announcement *pb.Announcement, fragments chan<- *pb.Fragment) error {
 	if fragments != nil {
 		defer close(fragments)
