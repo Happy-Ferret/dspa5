@@ -4,13 +4,14 @@ import (
 	pb "github.com/naggie/dspa5/dspa5"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/status"
+	"google.golang.org/grpc/codes"
 	"io"
 	"log"
 	"time"
 	sd01 "github.com/naggie/sd01/go"
 	"sync"
 	"net"
-	"errors"
 )
 
 func main() {
@@ -51,7 +52,7 @@ func (s *server) Speak(announcement *pb.Announcement, stream pb.Dspa5_SpeakServe
 
 	if len(services) < 1 {
 		log.Printf("No connected speakers to broadcast to")
-		return errors.New("No connected speakers to broadcast to")
+		return status.Error(codes.NotFound, "No connected speakers to broadcast to")
 	}
 
 	log.Printf("Broadcasting message to %v speakers and 0 displays", len(services))

@@ -38,3 +38,8 @@ Potential (concurrent) protocol:
    fragment references to play -- each fragment when the server knows all
    speakers have said fragment.
 
+
+
+
+
+https://jbrandhorst.com/post/grpc-errors/
