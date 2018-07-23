@@ -23,6 +23,7 @@ type Discoverer struct {
 	servicesMu sync.RWMutex
 	wg         sync.WaitGroup
 	stop       int32
+	Debug      bool
 }
 
 // NewDiscoverer returns a new Discoverer with name as the service filter.
@@ -35,7 +36,11 @@ func NewDiscoverer(name string) *Discoverer {
 }
 
 // GetServices returns a list of recently discovered services.
-func (d *Discoverer) GetServices() []Service {
+func (d *Discoverer) GetServices(wait bool) []Service {
+	if wait {
+		time.Sleep(Timeout)
+	}
+
 	d.servicesMu.RLock()
 	defer d.servicesMu.RUnlock()
 
@@ -109,7 +114,11 @@ func (d *Discoverer) run(conn net.PacketConn) {
 							Port:     portnum,
 							LastSeen: time.Now(),
 						}
-						d.services[discovered.String()] = discovered
+						key := discovered.String()
+						if _, exists := d.services[key]; !exists && d.Debug {
+							fmt.Fprintf(os.Stderr, "sd01.discoverer: New %v discovered at %v\n", d.name, key)
+						}
+						d.services[key] = discovered
 						d.servicesMu.Unlock()
 					}
 				}

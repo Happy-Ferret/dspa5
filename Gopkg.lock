@@ -17,7 +17,7 @@
   branch = "master"
   name = "github.com/naggie/sd01"
   packages = ["go"]
-  revision = "df009a60ed431535b84355ce60f9a368bda43ced"
+  revision = "3df6a25d918bf2b2953ad1a167566b056d2eef8d"
 
 [[projects]]
   branch = "master"
@@ -31,13 +31,13 @@
     "internal/timeseries",
     "trace"
   ]
-  revision = "cffdcf672aee934982473246bc7e9a8ba446aa9b"
+  revision = "a680a1efc54dd51c040b3b5ce4939ea3cf2ea0d1"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix"]
-  revision = "1b2967e3c290b7c545b3db0deeda16e9be4f98a2"
+  revision = "ac767d655b305d4e9612f5f6e33120b9176c4ad4"
 
 [[projects]]
   name = "golang.org/x/text"
@@ -64,7 +64,7 @@
   branch = "master"
   name = "google.golang.org/genproto"
   packages = ["googleapis/rpc/status"]
-  revision = "e92b116572682a5b432ddd840aeaba2a559eeff1"
+  revision = "02b4e95473316948020af0b7a4f0f22c73929b0e"
 
 [[projects]]
   name = "google.golang.org/grpc"
@@ -101,6 +101,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "baf41c4647954a750310560fc1047cef33830cab6b5c70f85e30268d374d7c92"
+  inputs-digest = "1b6e44655ca542260de4a6d470cf1adb707f1210e76728bb1eaeb28094f6bb11"
   solver-name = "gps-cdcl"
   solver-version = 1
