@@ -168,6 +168,7 @@ func synth(text string) (string, error) {
 		log.Printf("Error creating tmpfile: %v", err)
 		return "", err
 	}
+	f.Close()
 
 	// before https://go-review.googlesource.com/c/go/+/105675
 	tmpFile := f.Name() + fileExt
