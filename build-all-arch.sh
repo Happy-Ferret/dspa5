@@ -20,6 +20,6 @@ mv dist/dspa-speaker dist/darwin-amd64/
 
 #GOOS=windows GOARCH=amd64 make
 #mkdir -p dist/windows-amd64/
-#mv dist/dspa-client dist/windows-amd64/
-#mv dist/dspa-broadcaster dist/windows-amd64/
-#mv dist/dspa-speaker dist/windows-amd64/
+#mv dist/dspa-client.exe dist/windows-amd64/
+#mv dist/dspa-broadcaster.exe dist/windows-amd64/
+#mv dist/dspa-speaker.exe dist/windows-amd64/
