@@ -83,9 +83,10 @@ func speakUpstream(serverAddr string, announcement *pb.Announcement, fragments c
 		defer close(fragments)
 	}
 
-	var opts []grpc.DialOption
-	opts = append(opts, grpc.WithInsecure())
-	conn, err := grpc.Dial(serverAddr, opts...)
+	conn, err := grpc.Dial(
+		serverAddr,
+		grpc.WithInsecure(),
+	)
 
 	if err != nil {
 		log.Printf("Failed to connect: %v", err)
