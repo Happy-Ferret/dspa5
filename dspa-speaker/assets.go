@@ -225,10 +225,10 @@ func AssetNames() []string {
 // _bindata is a table, holding each asset generator, mapped to its name.
 var _bindata = map[string]func() (*asset, error){
 	"chimes/xerxes_breech.wav": chimesXerxes_breechWav,
-	"chimes/xerxes_chime.ogg": chimesXerxes_chimeOgg,
+	"chimes/xerxes_chime.ogg":  chimesXerxes_chimeOgg,
 	"chimes/xerxes_motion.wav": chimesXerxes_motionWav,
-	"chimes/xerxes_start.ogg": chimesXerxes_startOgg,
-	"chimes/xerxes_stop.ogg": chimesXerxes_stopOgg,
+	"chimes/xerxes_start.ogg":  chimesXerxes_startOgg,
+	"chimes/xerxes_stop.ogg":   chimesXerxes_stopOgg,
 }
 
 // AssetDir returns the file names below a certain
@@ -270,13 +270,14 @@ type bintree struct {
 	Func     func() (*asset, error)
 	Children map[string]*bintree
 }
+
 var _bintree = &bintree{nil, map[string]*bintree{
 	"chimes": &bintree{nil, map[string]*bintree{
 		"xerxes_breech.wav": &bintree{chimesXerxes_breechWav, map[string]*bintree{}},
-		"xerxes_chime.ogg": &bintree{chimesXerxes_chimeOgg, map[string]*bintree{}},
+		"xerxes_chime.ogg":  &bintree{chimesXerxes_chimeOgg, map[string]*bintree{}},
 		"xerxes_motion.wav": &bintree{chimesXerxes_motionWav, map[string]*bintree{}},
-		"xerxes_start.ogg": &bintree{chimesXerxes_startOgg, map[string]*bintree{}},
-		"xerxes_stop.ogg": &bintree{chimesXerxes_stopOgg, map[string]*bintree{}},
+		"xerxes_start.ogg":  &bintree{chimesXerxes_startOgg, map[string]*bintree{}},
+		"xerxes_stop.ogg":   &bintree{chimesXerxes_stopOgg, map[string]*bintree{}},
 	}},
 }}
 
@@ -326,4 +327,3 @@ func _filePath(dir, name string) string {
 	cannonicalName := strings.Replace(name, "\\", "/", -1)
 	return filepath.Join(append([]string{dir}, strings.Split(cannonicalName, "/")...)...)
 }
-

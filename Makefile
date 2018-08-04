@@ -37,3 +37,9 @@ dist: client broadcaster speaker
 update:
 # dep init created vendor directory!
 	dep ensure -update
+
+install:
+	go install ./...
+
+fmt:
+	go fmt ./...

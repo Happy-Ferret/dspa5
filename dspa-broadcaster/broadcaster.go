@@ -2,16 +2,16 @@ package main
 
 import (
 	pb "github.com/naggie/dspa5/dspa5"
+	sd01 "github.com/naggie/sd01/go"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/status"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"io"
 	"log"
-	"time"
-	sd01 "github.com/naggie/sd01/go"
-	"sync"
 	"net"
+	"sync"
+	"time"
 )
 
 func main() {
@@ -41,7 +41,7 @@ type server struct {
 
 func NewServer(discoverer *sd01.Discoverer) *server {
 	return &server{
-		discoverer: discoverer,
+		discoverer:       discoverer,
 		announcementLock: &sync.Mutex{},
 	}
 }
