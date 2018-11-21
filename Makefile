@@ -14,25 +14,25 @@ grpc:
 	dspa5/*.proto
 
 assets:
-	cd dspa-speaker && go generate
+	go generate
 
 client:
-	cd dspa-client && go build -ldflags="-s -w"
-	upx -q  dspa-client/dspa-client${EXT}
+	go build -ldflags="-s -w" dspa-client.go
 
 speaker:
-	cd dspa-speaker && go build -ldflags="-s -w"
-	upx -q dspa-speaker/dspa-speaker${EXT}
+	go build -ldflags="-s -w" dspa-speaker.go
 
 broadcaster:
-	cd dspa-broadcaster && go build -ldflags="-s -w"
-	upx -q dspa-broadcaster/dspa-broadcaster${EXT}
+	go build -ldflags="-s -w" dspa-broadcaster.go
 
 dist: client broadcaster speaker
 	mkdir -p dist && \
-		mv dspa-client/dspa-client${EXT} dist/
-		mv dspa-broadcaster/dspa-broadcaster${EXT} dist/
-		mv dspa-speaker/dspa-speaker${EXT} dist/
+		mv dspa-client${EXT} dist/
+		mv dspa-broadcaster${EXT} dist/
+		mv dspa-speaker${EXT} dist/
+	upx -q dist/dspa-client${EXT}
+	upx -q dist/dspa-speaker${EXT}
+	upx -q dist/dspa-broadcaster${EXT}
 
 update:
 # dep init created vendor directory!
