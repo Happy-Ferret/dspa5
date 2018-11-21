@@ -1,6 +1,6 @@
 package main
 
-//go:generate go-bindata -pkg $GOPACKAGE -o assets.go chimes/
+//go:generate go-bindata -pkg dspa5 -o dspa5/assets.go chimes/
 
 import (
 	"crypto/sha256"
@@ -238,7 +238,7 @@ func extractChimes() {
 
 	for file, location := range files {
 		log.Printf("Extracting %v", file)
-		data := MustAsset(path.Join("chimes", file))
+		data := pb.MustAsset(path.Join("chimes", file))
 
 		err := ioutil.WriteFile(location, []byte(data), 0644)
 
