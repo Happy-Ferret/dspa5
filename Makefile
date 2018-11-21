@@ -18,21 +18,21 @@ assets:
 
 client:
 	go build -ldflags="-s -w" dspa-client.go
+	upx -q dspa-client${EXT}
 
 speaker:
 	go build -ldflags="-s -w" dspa-speaker.go
+	upx -q dspa-speaker${EXT}
 
 broadcaster:
 	go build -ldflags="-s -w" dspa-broadcaster.go
+	upx -q dspa-broadcaster${EXT}
 
 dist: client broadcaster speaker
 	mkdir -p dist && \
 		mv dspa-client${EXT} dist/
 		mv dspa-broadcaster${EXT} dist/
 		mv dspa-speaker${EXT} dist/
-	upx -q dist/dspa-client${EXT}
-	upx -q dist/dspa-speaker${EXT}
-	upx -q dist/dspa-broadcaster${EXT}
 
 update:
 # dep init created vendor directory!
