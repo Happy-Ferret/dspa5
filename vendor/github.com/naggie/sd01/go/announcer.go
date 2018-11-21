@@ -6,26 +6,31 @@ import (
 	"os"
 	"sync"
 	"time"
+	"strings"
+)
+
+// these vars may be overridden by test
+var (
+	// Interval between announcements.
+	Interval = 5 * time.Second
 )
 
 const (
-	// Interval between announcements.
-	Interval = 5 * time.Second
 
 	// Port is the sd01 service discovery port number.
 	Port = 17823
 
 	// maxMessageLength is the maximum allowed message length for sd01 packets.
 	// This is intended to keep broadcast network traffic to a minimum.
-	maxMessageLength = 32
+	maxMessageLength = 64
 )
 
 // Announcer implements sd01 service announcement.
 type Announcer struct {
-	name string
-	port int
-	wg   *sync.WaitGroup
-	stop chan struct{}
+	name     string
+	port     int
+	wg       *sync.WaitGroup
+	stop     chan struct{}
 }
 
 // NewAnnouncer returns a new Announcer and published beacons containing the
@@ -34,10 +39,13 @@ func NewAnnouncer(name string, port int) *Announcer {
 	if port < 0 || port > 65535 {
 		panic("port number outside of legal range")
 	}
+	if strings.Contains(name, ":") {
+		panic("service name contains illegal colon")
+	}
 	return &Announcer{
-		name: name,
-		port: port,
-		wg:   &sync.WaitGroup{},
+		name:     name,
+		port:     port,
+		wg:       &sync.WaitGroup{},
 	}
 }
 
@@ -58,9 +66,9 @@ func (a *Announcer) Start() error {
 		return err
 	}
 
-	message := fmt.Sprintf("sd01%s%05d", a.name, a.port)
+	message := fmt.Sprintf("sd01:%s:%d", a.name, a.port)
 	if len(message) > maxMessageLength {
-		return fmt.Errorf("message is greater than 32 byte maximum (is %d: %s)", len(message), message)
+		return fmt.Errorf("message is greater than 64 byte maximum (is %d: %s)", len(message), message)
 	}
 
 	a.wg.Add(1)

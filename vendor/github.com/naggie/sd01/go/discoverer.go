@@ -8,11 +8,14 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
+	"strings"
 )
 
-const (
-	// Timeout after which a discovered service is marked offline.
-	Timeout = 2 * Interval
+// these vars may be overridden by test
+var (
+	// Timeout after which a discovered service is considered non-existent.
+	// Defined by protocol.
+	Timeout = 600 * time.Second
 )
 
 // Discoverer implements sd01 service discovery and provides a list of recently
@@ -36,11 +39,7 @@ func NewDiscoverer(name string) *Discoverer {
 }
 
 // GetServices returns a list of recently discovered services.
-func (d *Discoverer) GetServices(wait bool) []Service {
-	if wait {
-		time.Sleep(Timeout)
-	}
-
+func (d *Discoverer) GetServices() []Service {
 	d.servicesMu.RLock()
 	defer d.servicesMu.RUnlock()
 
@@ -82,47 +81,54 @@ func (d *Discoverer) run(conn net.PacketConn) {
 	defer conn.Close()
 
 	// try to create listen socket in a loop...etc.
-	buf := make([]byte, 64)
+	buf := make([]byte, maxMessageLength)
 
 	for atomic.LoadInt32(&d.stop) == 0 {
 		err := conn.SetReadDeadline(time.Now().Add(500 * time.Millisecond))
 		if err != nil {
 			fmt.Fprintln(os.Stderr, "sd01.discoverer: failed to set read deadline:", err)
-			time.Sleep(Timeout)
-		} else {
-			buflen, addr, err := conn.ReadFrom(buf)
-			if err != nil {
-				if e, ok := err.(net.Error); ok && !e.Timeout() {
-					fmt.Fprintln(os.Stderr, "sd01.discoverer: failed to read beacon:", err)
-				}
-			} else {
-				if buflen == 0 || buflen > 32 {
-					fmt.Fprintf(os.Stderr, "sd01.discoverer: received beacon of unsupported - length: %d, data: %s, addr: %s", buflen, string(buf[:buflen]), addr.String())
-				} else if string(buf[:4]) != "sd01" {
-					fmt.Fprintf(os.Stderr, "sd01.discoverer: received invalid beacon - length: %d, data: %s, addr: %s", buflen, string(buf[:buflen]), addr.String())
-				} else {
-					bufstr := string(buf[:buflen])
-					service := bufstr[4 : len(bufstr)-5]
-					portstr := bufstr[len(bufstr)-5:]
-					portnum, err := strconv.Atoi(portstr)
-					if err != nil {
-						fmt.Fprintf(os.Stderr, "sd01.discoverer: received beacon with invalid port - length: %d, data: %s, addr: %s", buflen, string(buf[:buflen]), addr.String())
-					} else if service == d.name {
-						d.servicesMu.Lock()
-						discovered := Service{
-							IP:       addr.(*net.UDPAddr).IP,
-							Port:     portnum,
-							LastSeen: time.Now(),
-						}
-						key := discovered.String()
-						if _, exists := d.services[key]; !exists && d.Debug {
-							fmt.Fprintf(os.Stderr, "sd01.discoverer: New %v discovered at %v\n", d.name, key)
-						}
-						d.services[key] = discovered
-						d.servicesMu.Unlock()
-					}
-				}
+			time.Sleep(time.Second)
+			continue
+		}
+		buflen, addr, err := conn.ReadFrom(buf)
+		if err != nil {
+			if e, ok := err.(net.Error); ok && !e.Timeout() {
+				fmt.Fprintln(os.Stderr, "sd01.discoverer: failed to read beacon:", err)
 			}
+			continue
+		}
+		if buflen == 0 || buflen > maxMessageLength {
+			fmt.Fprintf(os.Stderr, "sd01.discoverer: received beacon of unsupported - length: %d, data: %s, addr: %s", buflen, string(buf[:buflen]), addr.String())
+		} else if string(buf[:5]) != "sd01:" {
+			fmt.Fprintf(os.Stderr, "sd01.discoverer: received invalid beacon - length: %d, data: %s, addr: %s", buflen, string(buf[:buflen]), addr.String())
+			continue
+		}
+		bufstr := string(buf[:buflen])
+		parts := strings.SplitN(bufstr, ":", 3)
+
+		if len(parts) != 3 {
+			fmt.Fprintf(os.Stderr, "sd01.discoverer: received beacon with invalid number of parts - length: %d, data: %s, addr: %s", buflen, string(buf[:buflen]), addr.String())
+			continue
+		}
+
+		service := parts[1]
+		portstr := parts[2]
+		portnum, err := strconv.Atoi(portstr)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "sd01.discoverer: received beacon with invalid port - length: %d, data: %s, addr: %s", buflen, string(buf[:buflen]), addr.String())
+		} else if service == d.name {
+			d.servicesMu.Lock()
+			discovered := Service{
+				IP:       addr.(*net.UDPAddr).IP,
+				Port:     portnum,
+				LastSeen: time.Now(),
+			}
+			key := discovered.String()
+			if _, exists := d.services[key]; !exists && d.Debug {
+				fmt.Fprintf(os.Stderr, "sd01.discoverer: New %v discovered at %v\n", d.name, key)
+			}
+			d.services[key] = discovered
+			d.servicesMu.Unlock()
 		}
 	}
 }

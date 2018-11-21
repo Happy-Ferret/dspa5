@@ -38,7 +38,9 @@ copied atomically to the cache and played from there.
 # Possible further work
 
 * Chrome extension like the original DSPA
-* Architecture to subscribe to WAV (or MP3)
+* Better: Qt application for entire screen
+* Notification applet to show growl (or whatever) notifications
+* Architecture to subscribe to WAV (or MP3) ?
 * Broadcaster to broadcast to discovered/known nodes
 
 # Deployment
