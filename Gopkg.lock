@@ -2,6 +2,57 @@
 
 
 [[projects]]
+  branch = "master"
+  digest = "1:3a0a1adab2c5abbd6320d69da87a3d18687a895672206bb20e066c3a775c718f"
+  name = "github.com/faiface/glhf"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "82a6317ac380cdc61567d729fe48833d75b8108e"
+
+[[projects]]
+  branch = "master"
+  digest = "1:f43ae18fea96ddd49340e65001d1b556e2dba024228a93ee9eec25fe3fe52939"
+  name = "github.com/faiface/mainthread"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "8b78f0a41ae388189090ac4506612659fa53082b"
+
+[[projects]]
+  digest = "1:c94bf1329aa4252d99606eab2517ae79b8bd1a416a69c99955a91590932f84ea"
+  name = "github.com/faiface/pixel"
+  packages = [
+    ".",
+    "pixelgl",
+  ]
+  pruneopts = "UT"
+  revision = "0c2d627cfa32f437abe22d6a6ee1de7d102c0264"
+  version = "v0.8.0"
+
+[[projects]]
+  branch = "master"
+  digest = "1:9e7abd76b07ec74f95e8bf109dae5a5913532e7354218b1c955b42bd45b4cc9f"
+  name = "github.com/go-gl/gl"
+  packages = ["v3.3-core/gl"]
+  pruneopts = "UT"
+  revision = "55b76b7df9d25d70b63e31a767f47158292b85d8"
+
+[[projects]]
+  branch = "master"
+  digest = "1:96519e5f428b661be4ac2ed07cff5aaab64f668e29c392fa7494dc7c04bcf71a"
+  name = "github.com/go-gl/glfw"
+  packages = ["v3.2/glfw"]
+  pruneopts = "UT"
+  revision = "691ee1b84c51ae625ed1aafebc915d3db3d63d66"
+
+[[projects]]
+  branch = "master"
+  digest = "1:208382238a5b6e9a1a01e7f82e2dd3b80c0305fd622247f1ba6360805d398225"
+  name = "github.com/go-gl/mathgl"
+  packages = ["mgl32"]
+  pruneopts = "UT"
+  revision = "cdf14b6b8f8a4a1bfb003dd5119205c5f711d85a"
+
+[[projects]]
   digest = "1:4c0989ca0bcd10799064318923b9bc2db6b4d6338dd75f3f2d86c3511aaaf5cf"
   name = "github.com/golang/protobuf"
   packages = [
@@ -22,6 +73,22 @@
   packages = ["go"]
   pruneopts = "UT"
   revision = "a1394a3075a3b4d34a053fc162640f65e6652c13"
+
+[[projects]]
+  digest = "1:40e195917a951a8bf867cd05de2a46aaf1806c50cf92eebf4c16f78cd196f747"
+  name = "github.com/pkg/errors"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
+  version = "v0.8.0"
+
+[[projects]]
+  branch = "master"
+  digest = "1:95198eb6f7a9fd8970f3bd24f130da14b68ba1dc3738f191f39f4a822d21e6d8"
+  name = "golang.org/x/image"
+  packages = ["math/f32"]
+  pruneopts = "UT"
+  revision = "cd38e8056d9b27bb2f265effa37fb0ea6b8a7f0f"
 
 [[projects]]
   branch = "master"
@@ -117,6 +184,8 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/faiface/pixel",
+    "github.com/faiface/pixel/pixelgl",
     "github.com/golang/protobuf/proto",
     "github.com/naggie/sd01/go",
     "golang.org/x/net/context",
