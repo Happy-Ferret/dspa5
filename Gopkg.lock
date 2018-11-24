@@ -84,18 +84,23 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:95198eb6f7a9fd8970f3bd24f130da14b68ba1dc3738f191f39f4a822d21e6d8"
+  digest = "1:39186be82f76083b7e6a7468f70b8a1ec3997905581542db80b8a6a4b067fe58"
   name = "golang.org/x/image"
-  packages = ["math/f32"]
+  packages = [
+    "colornames",
+    "math/f32",
+  ]
   pruneopts = "UT"
   revision = "cd38e8056d9b27bb2f265effa37fb0ea6b8a7f0f"
 
 [[projects]]
   branch = "master"
-  digest = "1:6ca51c5d8a610b3da56856df7a8f8f3e075eba8d5f7a4acbadd79b2d2a368054"
+  digest = "1:91e16764720d5fc23def26777a8d527badeb72fbb8185d2abb45da448d2dc180"
   name = "golang.org/x/net"
   packages = [
     "context",
+    "html",
+    "html/atom",
     "http/httpguts",
     "http2",
     "http2/hpack",
@@ -188,6 +193,7 @@
     "github.com/faiface/pixel/pixelgl",
     "github.com/golang/protobuf/proto",
     "github.com/naggie/sd01/go",
+    "golang.org/x/image/colornames",
     "golang.org/x/net/context",
     "google.golang.org/grpc",
     "google.golang.org/grpc/codes",

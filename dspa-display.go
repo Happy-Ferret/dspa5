@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
+	"golang.org/x/image/colornames"
 )
 
 func run() {
@@ -21,6 +22,8 @@ func run() {
 	if err != nil {
 		panic(err)
 	}
+
+	win.Clear(colornames.Skyblue)
 
 	for !win.Closed() {
 		win.Update()
