@@ -5,6 +5,7 @@ service Dspa5 {
     // system will transform message into fragments and stream them back as they
     // are announced.
     rpc Speak (Announcement) returns (stream Fragment);
+    // TODO want or not? Speakers are not stateless with this.
 //    rpc SetName(Name) returns (Empty);
     rpc GetName(Empty) returns (Name);
 }
