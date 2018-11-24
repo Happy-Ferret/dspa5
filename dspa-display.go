@@ -6,12 +6,15 @@ import (
 )
 
 func run() {
+	monitor := pixelgl.PrimaryMonitor()
+	width, height := monitor.Size()
+
 	cfg := pixelgl.WindowConfig{
 		Title: "DSPA Display",
-		Monitor: pixelgl.PrimaryMonitor(),
+		Monitor: monitor,
 		Undecorated: true,
 		VSync: true,
-		Bounds: pixel.R(0, 0, 1024, 768),
+		Bounds: pixel.R(0, 0, width, height),
 	}
 
 	win, err := pixelgl.NewWindow(cfg)
