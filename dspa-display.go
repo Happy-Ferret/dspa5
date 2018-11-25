@@ -48,7 +48,7 @@ func run() {
 	sprite.Draw(win, pixel.IM.Moved(pixel.V(width/2, 2*height/3)))
 
 
-	face, err := loadTTF("etc/raleway/Raleway-Regular.ttf", 80)
+	face, err := loadTTF("etc/roboto/Roboto-Regular.ttf", 80)
 	if err != nil {
 		panic(err)
 	}
