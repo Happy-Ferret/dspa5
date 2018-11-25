@@ -18,11 +18,12 @@
   revision = "8b78f0a41ae388189090ac4506612659fa53082b"
 
 [[projects]]
-  digest = "1:c94bf1329aa4252d99606eab2517ae79b8bd1a416a69c99955a91590932f84ea"
+  digest = "1:9e3989eb0b024cf56df82bfae68d43b23adffa8070f0982ed15d45394c72ac56"
   name = "github.com/faiface/pixel"
   packages = [
     ".",
     "pixelgl",
+    "text",
   ]
   pruneopts = "UT"
   revision = "0c2d627cfa32f437abe22d6a6ee1de7d102c0264"
@@ -51,6 +52,17 @@
   packages = ["mgl32"]
   pruneopts = "UT"
   revision = "cdf14b6b8f8a4a1bfb003dd5119205c5f711d85a"
+
+[[projects]]
+  branch = "master"
+  digest = "1:62c57507df491b657e9ae2645f30958d9964c8eeb380600469eedc951ebb3a0e"
+  name = "github.com/golang/freetype"
+  packages = [
+    "raster",
+    "truetype",
+  ]
+  pruneopts = "UT"
+  revision = "e2365dfdc4a05e4b8299a783240d4a7d5a65d4e4"
 
 [[projects]]
   digest = "1:4c0989ca0bcd10799064318923b9bc2db6b4d6338dd75f3f2d86c3511aaaf5cf"
@@ -84,11 +96,15 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:39186be82f76083b7e6a7468f70b8a1ec3997905581542db80b8a6a4b067fe58"
+  digest = "1:e1b2135631383deea006d461d082ce6898dfd70f4276b50cef4424c6a65ceb8f"
   name = "golang.org/x/image"
   packages = [
     "colornames",
+    "font",
+    "font/basicfont",
+    "font/plan9font",
     "math/f32",
+    "math/fixed",
   ]
   pruneopts = "UT"
   revision = "cd38e8056d9b27bb2f265effa37fb0ea6b8a7f0f"
@@ -191,9 +207,12 @@
   input-imports = [
     "github.com/faiface/pixel",
     "github.com/faiface/pixel/pixelgl",
+    "github.com/faiface/pixel/text",
+    "github.com/golang/freetype/truetype",
     "github.com/golang/protobuf/proto",
     "github.com/naggie/sd01/go",
     "golang.org/x/image/colornames",
+    "golang.org/x/image/font",
     "golang.org/x/net/context",
     "google.golang.org/grpc",
     "google.golang.org/grpc/codes",

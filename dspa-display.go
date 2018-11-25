@@ -4,10 +4,17 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"golang.org/x/image/colornames"
+	"io/ioutil"
 	"os"
 	"image"
 	_ "image/png"
+	"github.com/faiface/pixel/text"
+	"github.com/golang/freetype/truetype"
+	"golang.org/x/image/font"
 )
+
+
+// TODO define update once per change instead of regularly
 
 func run() {
 	monitor := pixelgl.PrimaryMonitor()
@@ -26,15 +33,29 @@ func run() {
 		panic(err)
 	}
 
-	win.Clear(colornames.Black)
+	win.SetSmooth(true)
 
-	logo, err := loadPicture("logo.png")
-	sprite := pixel.NewSprite(logo, logo.Bounds())
-	sprite.Draw(win, pixel.IM.Moved(win.Bounds().Center()))
-
+	face, err := loadTTF("etc/raleway/Raleway-Regular.ttf", 80)
 	if err != nil {
 		panic(err)
 	}
+
+	atlas := text.NewAtlas(face, text.ASCII)
+	txt := text.New(pixel.V(50, 500), atlas)
+	txt.Color = colornames.White
+
+	win.Clear(colornames.Black)
+
+	logo, err := loadPicture("logo.png")
+	if err != nil {
+		panic(err)
+	}
+
+	sprite := pixel.NewSprite(logo, logo.Bounds())
+	sprite.Draw(win, pixel.IM.Moved(win.Bounds().Center()))
+
+	txt.WriteString("Test")
+	txt.Draw(win, pixel.IM.Moved(win.Bounds().Center().Sub(txt.Bounds().Center())))
 
 	for !win.Closed() {
 		win.Update()
@@ -58,4 +79,27 @@ func loadPicture(path string) (pixel.Picture, error) {
 		return nil, err
 	}
 	return pixel.PictureDataFromImage(img), nil
+}
+
+func loadTTF(path string, size float64) (font.Face, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	bytes, err := ioutil.ReadAll(file)
+	if err != nil {
+		return nil, err
+	}
+
+	font, err := truetype.Parse(bytes)
+	if err != nil {
+		return nil, err
+	}
+
+	return truetype.NewFace(font, &truetype.Options{
+		Size:              size,
+		GlyphCacheEntries: 1,
+	}), nil
 }
