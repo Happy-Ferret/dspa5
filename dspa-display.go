@@ -54,12 +54,11 @@ func run() {
 	}
 
 	atlas := text.NewAtlas(face, text.ASCII)
-	txt := text.New(pixel.V(width/2, height/3), atlas)
+	txt := text.New(pixel.V(width/2, height/3 - 80), atlas)
 	txt.Color = colornames.White
 
 	lines := []string {
 		"This is a line wrapped multiline",
-		"String. NEEDS UPPERCASE",
 	}
 
 	for _, line := range lines {
@@ -71,7 +70,7 @@ func run() {
 	txt.Draw(win, pixel.IM)
 	win.Update()
 	win.Update()
-	time.Sleep(time.Second)
+	time.Sleep(2*time.Second)
 
 	//for !win.Closed() {
 	//	win.Update()
