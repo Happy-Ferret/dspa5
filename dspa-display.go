@@ -13,6 +13,7 @@ import (
 	"github.com/golang/freetype/truetype"
 	"golang.org/x/image/font"
 	"time"
+	"strings"
 )
 
 
@@ -62,6 +63,7 @@ func run() {
 	}
 
 	for _, line := range lines {
+		line = strings.ToUpper(line)
 		txt.Dot.X -= txt.BoundsOf(line).W() / 2
 		fmt.Fprintln(txt, line)
 	}
