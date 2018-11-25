@@ -53,8 +53,11 @@ func run() {
 		panic(err)
 	}
 
+	// to position the text half way between the logo and bottom (80px font size)
+	textY := ((2*height/3 - logo.Bounds().H()/2))/2 - 40
+
 	atlas := text.NewAtlas(face, text.ASCII)
-	txt := text.New(pixel.V(width/2, height/3 - 80), atlas)
+	txt := text.New(pixel.V(width/2, textY), atlas)
 	txt.Color = colornames.White
 
 	lines := []string {
