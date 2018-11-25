@@ -6,11 +6,13 @@ import (
 	"golang.org/x/image/colornames"
 	"io/ioutil"
 	"os"
+	"fmt"
 	"image"
 	_ "image/png"
 	"github.com/faiface/pixel/text"
 	"github.com/golang/freetype/truetype"
 	"golang.org/x/image/font"
+	"time"
 )
 
 
@@ -34,16 +36,6 @@ func run() {
 	}
 
 	win.SetSmooth(true)
-
-	face, err := loadTTF("etc/raleway/Raleway-Regular.ttf", 80)
-	if err != nil {
-		panic(err)
-	}
-
-	atlas := text.NewAtlas(face, text.ASCII)
-	txt := text.New(pixel.V(50, 500), atlas)
-	txt.Color = colornames.White
-
 	win.Clear(colornames.Black)
 
 	logo, err := loadPicture("logo.png")
@@ -54,12 +46,34 @@ func run() {
 	sprite := pixel.NewSprite(logo, logo.Bounds())
 	sprite.Draw(win, pixel.IM.Moved(win.Bounds().Center()))
 
-	txt.WriteString("Test")
-	txt.Draw(win, pixel.IM.Moved(win.Bounds().Center().Sub(txt.Bounds().Center())))
 
-	for !win.Closed() {
-		win.Update()
+	face, err := loadTTF("etc/raleway/Raleway-Regular.ttf", 80)
+	if err != nil {
+		panic(err)
 	}
+
+	atlas := text.NewAtlas(face, text.ASCII)
+	txt := text.New(pixel.V(width/2, 2*height/3), atlas)
+	//txt := text.New(pixel.V(50, 500), atlas)
+	txt.Color = colornames.White
+
+	lines := []string {
+		"This is a line wrapped multiline",
+		"String. NEEDS UPPERCASE",
+	}
+
+	for _, line := range lines {
+		txt.Dot.X -= txt.BoundsOf(line).W() / 2
+		fmt.Fprintln(txt, line)
+	}
+
+	txt.Draw(win, pixel.IM)
+	win.Update()
+	time.Sleep(time.Second)
+
+	//for !win.Closed() {
+	//	win.Update()
+	//}
 }
 
 // GUI thread must be on main thread for most OSes which is difficult in go.
