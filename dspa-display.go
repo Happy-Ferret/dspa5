@@ -44,7 +44,7 @@ func run() {
 	}
 
 	sprite := pixel.NewSprite(logo, logo.Bounds())
-	sprite.Draw(win, pixel.IM.Moved(win.Bounds().Center()))
+	sprite.Draw(win, pixel.IM.Moved(pixel.V(width/2, 2*height/3)))
 
 
 	face, err := loadTTF("etc/raleway/Raleway-Regular.ttf", 80)
@@ -53,8 +53,7 @@ func run() {
 	}
 
 	atlas := text.NewAtlas(face, text.ASCII)
-	txt := text.New(pixel.V(width/2, 2*height/3), atlas)
-	//txt := text.New(pixel.V(50, 500), atlas)
+	txt := text.New(pixel.V(width/2, height/3), atlas)
 	txt.Color = colornames.White
 
 	lines := []string {
@@ -68,6 +67,7 @@ func run() {
 	}
 
 	txt.Draw(win, pixel.IM)
+	win.Update()
 	win.Update()
 	time.Sleep(time.Second)
 
