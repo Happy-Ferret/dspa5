@@ -18,8 +18,6 @@ import (
 
 
 func run() {
-	monitor := pixelgl.PrimaryMonitor()
-
 	logo, err := loadPicture("logo.png")
 	if err != nil {
 		panic(err)
@@ -31,11 +29,20 @@ func run() {
 	}
 	atlas := text.NewAtlas(face, text.ASCII)
 
-	splash := NewSplash(monitor, logo, atlas)
-	splash.SetLogo(true)
-	splash.SetText("Hello world!")
-	splash.DoFrame()
-	splash.DoFrame()
+	var splashes []*Splash
+
+	for _, monitor := range pixelgl.Monitors() {
+		s := NewSplash(monitor, logo, atlas)
+		s.SetLogo(true)
+		s.SetText("Hello world!")
+		splashes = append(splashes, s)
+	}
+
+	for _, s := range splashes {
+		s.DoFrame()
+		s.DoFrame()
+	}
+
 	time.Sleep(2*time.Second)
 
 	//for !win.Closed() {
