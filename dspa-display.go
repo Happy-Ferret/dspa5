@@ -17,11 +17,59 @@ import (
 )
 
 
-// TODO define update once per change instead of regularly
-
 func run() {
 	monitor := pixelgl.PrimaryMonitor()
+
+	logo, err := loadPicture("logo.png")
+	if err != nil {
+		panic(err)
+	}
+
+	face, err := loadTTF("etc/roboto/Roboto-Regular.ttf", 80)
+	if err != nil {
+		panic(err)
+	}
+	atlas := text.NewAtlas(face, text.ASCII)
+
+	splash := NewSplash(monitor, logo, atlas)
+	splash.SetLogo(true)
+	splash.SetText("Hello world!")
+	splash.DoFrame()
+	splash.DoFrame()
+	time.Sleep(2*time.Second)
+
+	//for !win.Closed() {
+	//	win.Update()
+	//}
+}
+
+// GUI thread must be on main thread for most OSes which is difficult in go.
+// This achieves it.
+func main() {
+	pixelgl.Run(run)
+}
+
+type Splash struct {
+	monitor *pixelgl.Monitor
+	window *pixelgl.Window
+	logo pixel.Picture
+	sprite *pixel.Sprite
+	atlas *text.Atlas
+	width float64
+	height float64
+	logoVisible bool
+	text string
+}
+
+func NewSplash(monitor *pixelgl.Monitor, logo pixel.Picture, atlas *text.Atlas) *Splash {
 	width, height := monitor.Size()
+	s := Splash{
+		monitor: monitor,
+		logo: logo,
+		atlas: atlas,
+		width: width,
+		height: height,
+	}
 
 	cfg := pixelgl.WindowConfig{
 		Title: "DSPA Display",
@@ -37,53 +85,45 @@ func run() {
 	}
 
 	win.SetSmooth(true)
-	win.Clear(colornames.Black)
+	s.window = win
 
-	logo, err := loadPicture("logo.png")
-	if err != nil {
-		panic(err)
-	}
+	s.sprite = pixel.NewSprite(logo, logo.Bounds())
 
-	sprite := pixel.NewSprite(logo, logo.Bounds())
-	sprite.Draw(win, pixel.IM.Moved(pixel.V(width/2, 2*height/3)))
-
-
-	face, err := loadTTF("etc/roboto/Roboto-Regular.ttf", 80)
-	if err != nil {
-		panic(err)
-	}
-
-	// to position the text half way between the logo and bottom (80px font size)
-	textY := ((2*height/3 - logo.Bounds().H()/2))/2 - 40
-
-	atlas := text.NewAtlas(face, text.ASCII)
-	txt := text.New(pixel.V(width/2, textY), atlas)
-	txt.Color = colornames.White
-
-	lines := []string {
-		"This is a line wrapped multiline",
-	}
-
-	for _, line := range lines {
-		line = strings.ToUpper(line)
-		txt.Dot.X -= txt.BoundsOf(line).W() / 2
-		fmt.Fprintln(txt, line)
-	}
-
-	txt.Draw(win, pixel.IM)
-	win.Update()
-	win.Update()
-	time.Sleep(2*time.Second)
-
-	//for !win.Closed() {
-	//	win.Update()
-	//}
+	return &s
 }
 
-// GUI thread must be on main thread for most OSes which is difficult in go.
-// This achieves it.
-func main() {
-	pixelgl.Run(run)
+func (s *Splash) SetLogo(visible bool) {
+	s.logoVisible = visible
+}
+
+func (s *Splash) SetText(text string) {
+	s.text = text
+}
+
+func (s *Splash) DoFrame() {
+	s.window.Clear(colornames.Black)
+
+	// default text position with no logo -- center
+	textY := s.height/2 -40
+
+	if s.logoVisible {
+		s.sprite.Draw(s.window, pixel.IM.Moved(pixel.V(s.width/2, 2*s.height/3)))
+		// to position the text half way between the logo and bottom (80px font size)
+		textY = ((2*s.height/3 - s.logo.Bounds().H()/2))/2 - 40
+	}
+
+	txt := text.New(pixel.V(s.width/2, textY), s.atlas)
+	txt.Color = colornames.White
+	line := strings.ToUpper(s.text)
+	txt.Dot.X -= txt.BoundsOf(line).W() / 2
+	fmt.Fprintln(txt, line)
+	txt.Draw(s.window, pixel.IM)
+
+	s.window.Update()
+}
+
+func (s *Splash) Destroy() {
+	s.window.Destroy()
 }
 
 func loadPicture(path string) (pixel.Picture, error) {
@@ -121,3 +161,4 @@ func loadTTF(path string, size float64) (font.Face, error) {
 		GlyphCacheEntries: 1,
 	}), nil
 }
+
