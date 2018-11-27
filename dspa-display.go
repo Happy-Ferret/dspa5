@@ -103,13 +103,13 @@ func (s *Splash) SetText(text string) {
 func (s *Splash) DoFrame() {
 	s.window.Clear(colornames.Black)
 
-	// default text position with no logo -- center
-	textY := s.height/2 -40
+	// default text position with no logo -- center (80px font)
+	textY := s.height/2 - 40
 
 	if s.logoVisible {
 		s.sprite.Draw(s.window, pixel.IM.Moved(pixel.V(s.width/2, 2*s.height/3)))
 		// to position the text half way between the logo and bottom (80px font size)
-		textY = ((2*s.height/3 - s.logo.Bounds().H()/2))/2 - 40
+		textY = ((2*s.height/3 - s.logo.Bounds().H()/2))/2
 	}
 
 	txt := text.New(pixel.V(s.width/2, textY), s.atlas)
