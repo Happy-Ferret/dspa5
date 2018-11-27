@@ -85,6 +85,7 @@ func NewSplash(monitor *pixelgl.Monitor, logo pixel.Picture, atlas *text.Atlas) 
 	}
 
 	win.SetSmooth(true)
+	win.SetCursorVisible(false)
 	s.window = win
 
 	s.sprite = pixel.NewSprite(logo, logo.Bounds())
