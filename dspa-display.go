@@ -1,5 +1,7 @@
 package main
 
+//go:generate go-bindata -pkg dspa5 -o dspa5/displayassets.go etc/roboto/Roboto-Regular.ttf
+
 import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
@@ -11,7 +13,6 @@ import (
 	_ "image/png"
 	"github.com/faiface/pixel/text"
 	"github.com/golang/freetype/truetype"
-	"golang.org/x/image/font"
 	"time"
 	"strings"
 )
@@ -20,16 +21,8 @@ import (
 func run() {
 	monitor := pixelgl.PrimaryMonitor()
 
-	logo, err := loadPicture("logo.png")
-	if err != nil {
-		panic(err)
-	}
-
-	face, err := loadTTF("etc/roboto/Roboto-Regular.ttf", 80)
-	if err != nil {
-		panic(err)
-	}
-	atlas := text.NewAtlas(face, text.ASCII)
+	logo := mustLoadPicture("logo.png")
+	atlas := mustLoadTTFAtlas("etc/roboto/Roboto-Regular.ttf", 80)
 
 	splash := NewSplash(monitor, logo, atlas)
 	splash.SetLogo(true)
@@ -127,39 +120,41 @@ func (s *Splash) Destroy() {
 	s.window.Destroy()
 }
 
-func loadPicture(path string) (pixel.Picture, error) {
+func mustLoadPicture(path string) pixel.Picture {
 	file, err := os.Open(path)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
 	defer file.Close()
 	img, _, err := image.Decode(file)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
-	return pixel.PictureDataFromImage(img), nil
+	return pixel.PictureDataFromImage(img)
 }
 
-func loadTTF(path string, size float64) (font.Face, error) {
+func mustLoadTTFAtlas(path string, size float64) *text.Atlas {
 	file, err := os.Open(path)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
 	defer file.Close()
 
 	bytes, err := ioutil.ReadAll(file)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
 
 	font, err := truetype.Parse(bytes)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
 
-	return truetype.NewFace(font, &truetype.Options{
+	face := truetype.NewFace(font, &truetype.Options{
 		Size:              size,
 		GlyphCacheEntries: 1,
-	}), nil
+	})
+
+	return text.NewAtlas(face, text.ASCII)
 }
 
