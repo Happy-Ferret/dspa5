@@ -14,7 +14,9 @@ grpc:
 	dspa5/*.proto
 
 assets:
-	go generate
+	# https://github.com/jteeuwen/go-bindata
+	go-bindata -pkg speaker -o bindata/speaker/speaker.go chimes/
+	go-bindata -pkg display -o bindata/display/display.go etc/roboto/
 
 client:
 	go build -ldflags="-s -w" dspa-client.go

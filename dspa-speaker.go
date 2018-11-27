@@ -1,11 +1,10 @@
 package main
 
-//go:generate go-bindata -pkg dspa5 -o dspa5/assets.go chimes/
-
 import (
 	"crypto/sha256"
 	"encoding/hex"
 	pb "github.com/naggie/dspa5/dspa5"
+	bindata "github.com/naggie/dspa5/bindata/speaker"
 	sd01 "github.com/naggie/sd01/go"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
@@ -238,7 +237,7 @@ func extractChimes() {
 
 	for file, location := range files {
 		log.Printf("Extracting %v", file)
-		data := pb.MustAsset(path.Join("chimes", file))
+		data := bindata.MustAsset(path.Join("chimes", file))
 
 		err := ioutil.WriteFile(location, []byte(data), 0644)
 

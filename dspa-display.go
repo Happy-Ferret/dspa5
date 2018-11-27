@@ -1,12 +1,10 @@
 package main
 
-//go:generate go-bindata -pkg dspa5 -o dspa5/displayassets.go etc/roboto/Roboto-Regular.ttf
-
 import (
 	"github.com/faiface/pixel"
+	bindata "github.com/naggie/dspa5/bindata/display"
 	"github.com/faiface/pixel/pixelgl"
 	"golang.org/x/image/colornames"
-	"io/ioutil"
 	"os"
 	"fmt"
 	"image"
@@ -21,7 +19,7 @@ import (
 func run() {
 	monitor := pixelgl.PrimaryMonitor()
 
-	logo := mustLoadPicture("logo.png")
+	logo := mustLoadPicture("etc/darksky-logo.png")
 	atlas := mustLoadTTFAtlas("etc/roboto/Roboto-Regular.ttf", 80)
 
 	splash := NewSplash(monitor, logo, atlas)
@@ -133,17 +131,8 @@ func mustLoadPicture(path string) pixel.Picture {
 	return pixel.PictureDataFromImage(img)
 }
 
-func mustLoadTTFAtlas(path string, size float64) *text.Atlas {
-	file, err := os.Open(path)
-	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
-
-	bytes, err := ioutil.ReadAll(file)
-	if err != nil {
-		panic(err)
-	}
+func mustLoadTTFAtlas(bindataPath string, size float64) *text.Atlas {
+	bytes := bindata.MustAsset(bindataPath)
 
 	font, err := truetype.Parse(bytes)
 	if err != nil {
